@@ -1,0 +1,283 @@
+/* ==========================================================================
+   STYLE GLOBAL & REUSABLE - CAFE MENU
+   Bisa dipakai untuk Beranda, Login Pelanggan, Login Petugas, dll.
+   ========================================================================== */
+
+:root {
+    --bg-page: #F7F4EE;
+    --color-primary: #5C4033;
+    --color-primary-hover: #4A3328;
+    --color-title: #382519;
+    --color-subtitle: #7A6252;
+    --color-card-title: #4A3525;
+    --color-card-sub: #9A8B80;
+    --color-border: #CFC5B8;
+    --color-input-border: #B5A599;
+    --font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #e5e5e5;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: var(--font-serif);
+}
+
+/* Container Frame Ponsel */
+.mobile-container {
+    width: 100%;
+    max-width: 380px;
+    min-height: 720px;
+    background-color: var(--bg-page);
+    border: 1px solid #E2DDD5;
+    padding: 70px 24px 40px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+}
+
+/* Dekorasi Header Kopi Atas */
+.header-deco {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+.deco-line {
+    flex: 1;
+    height: 1px;
+    background-color: var(--color-border);
+}
+
+.coffee-icon {
+    color: var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Tipografi Header */
+.main-title {
+    color: var(--color-title);
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.main-subtitle {
+    color: var(--color-subtitle);
+    font-size: 13.5px;
+    font-weight: 600;
+    margin-bottom: 36px;
+    text-align: center;
+    letter-spacing: 0.2px;
+}
+
+/* Kartu Putih Melayang (Card Form) */
+.auth-card {
+    width: 100%;
+    background-color: #FFFFFF;
+    border-radius: 24px;
+    padding: 34px 22px 28px 22px;
+    box-shadow: 0 12px 32px rgba(92, 64, 51, 0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.card-title {
+    color: var(--color-card-title);
+    font-size: 19px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    text-align: center;
+}
+
+.card-subtitle {
+    color: var(--color-card-sub);
+    font-size: 12.5px;
+    font-weight: 500;
+    margin-bottom: 26px;
+    text-align: center;
+}
+
+/* Form & Input Fields */
+.auth-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.input-box {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon {
+    position: absolute;
+    left: 16px;
+    color: var(--color-input-border);
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+}
+
+.form-input {
+    width: 100%;
+    height: 52px;
+    border: 1.5px solid var(--color-input-border);
+    border-radius: 14px;
+    background-color: transparent;
+    padding: 0 16px 0 48px;
+    font-family: var(--font-serif);
+    font-size: 14px;
+    color: var(--color-card-title);
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-input::placeholder {
+    color: var(--color-card-sub);
+    font-family: var(--font-serif);
+}
+
+.form-input:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(92, 64, 51, 0.1);
+}
+
+/* Select Dropdown */
+.select-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.form-select {
+    width: 100%;
+    height: 52px;
+    border: 1.5px solid var(--color-input-border);
+    border-radius: 14px;
+    background-color: transparent;
+    padding: 0 44px 0 20px;
+    font-family: var(--font-serif);
+    font-size: 14px;
+    color: var(--color-card-sub);
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+
+.form-select:focus {
+    border-color: var(--color-primary);
+    color: var(--color-card-title);
+}
+
+.select-arrow {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-card-title);
+    pointer-events: none;
+}
+
+/* Tombol Submit Cokelat */
+.btn-submit {
+    width: 100%;
+    height: 52px;
+    background-color: var(--color-primary);
+    color: #FFFFFF;
+    border: none;
+    border-radius: 14px;
+    font-family: var(--font-serif);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 22px;
+    margin-top: 8px;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 10px rgba(92, 64, 51, 0.15);
+}
+
+.btn-submit:hover {
+    background-color: var(--color-primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(74, 51, 40, 0.25);
+}
+
+.btn-submit:active {
+    transform: translateY(0);
+}
+
+svg {
+    display: block;
+}
+
+/* Tambahan untuk Halaman Pilihan Peran (index.php) */
+.role-menu {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.role-btn {
+    display: flex;
+    align-items: center;
+    background-color: var(--color-primary);
+    color: #FFFFFF;
+    text-decoration: none;
+    padding: 18px 22px;
+    border-radius: 16px;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 10px rgba(92, 64, 51, 0.15);
+}
+
+.role-btn:hover {
+    background-color: var(--color-primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(74, 51, 40, 0.25);
+}
+
+.btn-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 18px;
+}
+
+.btn-text {
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+.btn-arrow {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

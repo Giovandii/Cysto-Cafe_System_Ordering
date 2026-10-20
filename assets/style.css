@@ -1,0 +1,117 @@
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #e5e5e5;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+        }
+
+        .mobile-container {
+            width: 100%;
+            max-width: 380px;
+            min-height: 720px;
+            background-color: #F7F4EE;
+            border: 1px solid #E2DDD5;
+            padding: 70px 28px 40px 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-deco {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .deco-line {
+            flex: 1;
+            height: 1px;
+            background-color: #CFC5B8;
+        }
+
+        .coffee-icon {
+            color: #5C4033;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .title {
+            color: #382519;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #7A6252;
+            font-size: 13.5px;
+            font-weight: 600;
+            margin-bottom: 42px;
+            text-align: center;
+            letter-spacing: 0.2px;
+        }
+
+        .role-menu {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .role-btn {
+            display: flex;
+            align-items: center;
+            background-color: #5C4033;
+            color: #FFFFFF;
+            text-decoration: none;
+            padding: 18px 22px;
+            border-radius: 16px;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 10px rgba(92, 64, 51, 0.15);
+        }
+
+        .role-btn:hover {
+            background-color: #4A3328;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(74, 51, 40, 0.25);
+        }
+
+        .btn-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 18px;
+        }
+
+        .btn-text {
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .btn-arrow {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        svg {
+            display: block;
+        }
