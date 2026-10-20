@@ -34,22 +34,6 @@ require_once __DIR__ . '/includes/koneksi.php';
 
         <!-- Navigasi Pemilihan Peran -->
         <main class="role-menu">
-            <!-- 1. Pelanggan -> Masuk ke Form Login Pelanggan -->
-            <a href="pelanggan/LoginForPelanggan.php" class="role-btn">
-                <div class="btn-icon">
-                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="7" r="4"></circle>
-                        <path d="M5.5 21a6.5 6.5 0 0 1 13 0"></path>
-                    </svg>
-                </div>
-                <span class="btn-text">Pelanggan</span>
-                <div class="btn-arrow">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M5 12h14"></path>
-                        <path d="m13 6 6 6-6 6"></path>
-                    </svg>
-                </div>
-            </a>
 
             <!-- 2. Kasir -->
             <a href="LoginForWorker.php?role=kasir" class="role-btn">
