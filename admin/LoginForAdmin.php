@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['role']     = $user['role'];
 
                 // Redirect sukses masuk ke dashboard admin
-                header('Location: BerandaAdmin.php');
+                header('Location: UrusPesanan.php');
                 exit;
             } else {
                 $error = 'Username, password, atau hak akses Admin tidak valid!';
