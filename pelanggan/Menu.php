@@ -12,7 +12,6 @@ if (empty($_SESSION['id_meja'])) {
     <div style='font-family: serif; text-align: center; padding: 50px 20px; background-color: #F7F4EE; min-height: 100vh;'>
         <h2 style='color: #5C4033;'>Akses Ditolak</h2>
         <p style='color: #7A6252;'>Silakan scan QR Code yang ada di meja kafe untuk mulai memesan!</p>
-        <p><a href='../index.php' style='color: #5C4033; font-weight: bold;'>Kembali ke Beranda</a></p>
     </div>
     ");
 }
