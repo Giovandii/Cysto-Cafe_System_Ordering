@@ -32,7 +32,7 @@ $active_menu   = $active_menu ?? 'urus_pesanan'; // Menandai menu yang aktif
     <!-- Daftar Navigasi -->
     <nav class="sidebar-nav">
         <!-- 1. MENU BERSAMA (Bisa Diakses Kasir & Admin) -->
-        <a href="urus_pesanan.php" class="nav-btn <?= ($active_menu === 'urus_pesanan') ? 'active' : '' ?>">
+        <a href="UrusPesanan.php" class="nav-btn <?= ($active_menu === 'urus_pesanan') ? 'active' : '' ?>">
             <span class="btn-icon">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                     <path d="M8 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-3"></path>
@@ -42,7 +42,7 @@ $active_menu   = $active_menu ?? 'urus_pesanan'; // Menandai menu yang aktif
             <span class="btn-label">Urus Pesanan</span>
         </a>
 
-        <a href="riwayat_pesanan.php" class="nav-btn <?= ($active_menu === 'riwayat_pesanan') ? 'active' : '' ?>">
+        <a href="RiwayatPesanan.php" class="nav-btn <?= ($active_menu === 'riwayat_pesanan') ? 'active' : '' ?>">
             <span class="btn-icon">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                     <circle cx="12" cy="12" r="10"></circle>

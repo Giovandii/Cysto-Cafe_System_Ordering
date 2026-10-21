@@ -382,3 +382,45 @@ body.dashboard-body {
     font-weight: 700;
     cursor: pointer;
 }
+
+/* Styling khusus tombol tab filter status (Semua, Terlayani, Batal) */
+        .status-tab-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-tab {
+            background-color: #5A3D2D;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 18px;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .btn-tab:hover {
+            background-color: #432b1e;
+        }
+
+        .btn-tab.active {
+            background-color: #E6DED5;
+            color: #382519;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);
+        }
+
+        .top-filter-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
