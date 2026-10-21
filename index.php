@@ -36,7 +36,7 @@ require_once __DIR__ . '/includes/koneksi.php';
         <main class="role-menu">
 
             <!-- 2. Kasir -->
-            <a href="LoginForWorker.php?role=kasir" class="role-btn">
+            <a href="kasir/LoginForKasir.php?role=kasir" class="role-btn">
                 <div class="btn-icon">
                     <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M8 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-3"></path>
