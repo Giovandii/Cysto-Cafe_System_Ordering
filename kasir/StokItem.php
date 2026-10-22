@@ -235,7 +235,7 @@ try {
                             <circle cx="11" cy="11" r="8"></circle>
                             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                         </svg>
-                        <span>Cari :</span>
+                        <span>Cari:</span>
                         <input type="text" name="q" placeholder="Nama menu..." value="<?= e($search_query) ?>" style="border:none; outline:none; font-family:inherit;">
                     </form>
                 </div>
