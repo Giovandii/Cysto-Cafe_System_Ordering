@@ -3,7 +3,7 @@ session_start();
 
 // Proteksi login
 if (!isset($_SESSION['user_id'])) {
-    header('Location: ../login.php');
+    header('Location: LoginForKasir.php');
     exit;
 }
 
@@ -259,7 +259,8 @@ try {
                                     <td>1</td>
                                     <td>
                                         <div class="item-cell">
-                                            <img src="../assets/images/salted-caramel.png" onerror="this.src='../assets/images/coffee-icon.svg'" class="item-thumb" alt="Salted Caramel">
+                                            <!-- BENAR (Anti Looping) -->
+                                            <img src="..." onerror="this.onerror=null; this.src='../assets/images/coffee-icon.svg'">
                                             <span class="item-title">Salted Caramel</span>
                                         </div>
                                     </td>
@@ -281,7 +282,8 @@ try {
                                     <td>2</td>
                                     <td>
                                         <div class="item-cell">
-                                            <img src="../assets/images/potato-wedges.png" onerror="this.src='../assets/images/coffee-icon.svg'" class="item-thumb" alt="Potato Wedges">
+                                            <!-- BENAR (Anti Looping) -->
+                                            <img src="..." onerror="this.onerror=null; this.src='../assets/images/coffee-icon.svg'">
                                             <span class="item-title">Potato Wedges</span>
                                         </div>
                                     </td>
@@ -303,7 +305,8 @@ try {
                                     <td>3</td>
                                     <td>
                                         <div class="item-cell">
-                                            <img src="../assets/images/french-fries.png" onerror="this.src='../assets/images/coffee-icon.svg'" class="item-thumb" alt="French Fries">
+                                            <!-- BENAR (Anti Looping) -->
+                                            <img src="..." onerror="this.onerror=null; this.src='../assets/images/coffee-icon.svg'">
                                             <span class="item-title">French Fries</span>
                                         </div>
                                     </td>
@@ -327,7 +330,7 @@ try {
                                         <td><?= $no++ ?></td>
                                         <td>
                                             <div class="item-cell">
-                                                <img src="../assets/images/menu/<?= e($item['gambar'] ?? 'default.png') ?>" onerror="this.src='../assets/images/coffee-icon.svg'" class="item-thumb" alt="<?= e($item['nama']) ?>">
+                                                <img src="../assets/images/menu/<?= e($item['gambar'] ?? 'default.png') ?>"  class="item-thumb" alt="<?= e($item['nama']) ?>">
                                                 <span class="item-title"><?= e($item['nama']) ?></span>
                                             </div>
                                         </td>
