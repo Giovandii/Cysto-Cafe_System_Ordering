@@ -1,12 +1,53 @@
 <?php
 session_start();
-// Proteksi login
+
+// Proteksi Login
 if (!isset($_SESSION['user_id'])) {
     header('Location: LoginForAdmin.php');
     exit;
 }
 
-$active_menu = 'urus_pesanan';
+$active_menu = 'UrusPesanan';
+
+// 1. Hubungkan ke database & helper
+require_once __DIR__ . '/../includes/koneksi.php';
+require_once __DIR__ . '/../includes/helpers.php';
+
+// 2. Query Mengambil Daftar Pesanan Aktif + Metode Pembayaran (jika ada)
+$sql = "
+    SELECT p.id_pesanan, p.waktu_pesan, p.nama_pelanggan, p.id_meja, p.total, p.status,
+           COALESCE(t.metode, '-') AS metode, t.id_transaksi
+    FROM pesanan p
+    LEFT JOIN transaksi t ON p.id_pesanan = t.id_pesanan
+    ORDER BY p.waktu_pesan DESC
+";
+$stmt = $pdo->query($sql);
+$orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// 3. Tentukan Order Mana yang Sedang Dilihat Rinciannya (Default: Order Pertama)
+$selected_id = $_GET['order_id'] ?? ($orders[0]['id_pesanan'] ?? '');
+
+// Ambil item menu yang dibeli untuk pesanan yang dipilih
+$order_items = [];
+$selected_order = null;
+
+if (!empty($selected_id)) {
+    // Ambil data induk pesanan
+    $stmt_sel = $pdo->prepare("SELECT * FROM pesanan WHERE id_pesanan = :id");
+    $stmt_sel->execute([':id' => $selected_id]);
+    $selected_order = $stmt_sel->fetch(PDO::FETCH_ASSOC);
+
+    // Ambil item detail pesanan + nama menu
+    $stmt_items = $pdo->prepare("
+        SELECT d.id_detail, d.jumlah, d.harga_satuan, d.subtotal, d.catatan, m.nama AS nama_menu
+        FROM detail_pesanan d
+        JOIN menu m ON d.id_menu = m.id_menu
+        WHERE d.id_pesanan = :id
+        ORDER BY d.id_detail ASC
+    ");
+    $stmt_items->execute([':id' => $selected_id]);
+    $order_items = $stmt_items->fetchAll(PDO::FETCH_ASSOC);
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -19,17 +60,16 @@ $active_menu = 'urus_pesanan';
 <body class="dashboard-body">
 
     <div class="dashboard-layout">
-        <!-- 1. Panggil Sidebar Modular -->
-        <?php include __DIR__ . '/../includes/SideBar.php'; ?>
+        <!-- Panggil Sidebar Modular -->
+        <?php include __DIR__ . '/../includes/sidebar.php'; ?>
 
-        <!-- 2. Konten Utama Halaman -->
+        <!-- Konten Utama -->
         <main class="dashboard-content">
             <div class="content-header">
                 <h1 class="page-title">Urus Pesanan</h1>
                 <p class="page-subtitle">Kelola pesanan pelanggan dengan mudah</p>
             </div>
 
-            <!-- Panel Putih Utama -->
             <div class="order-main-panel">
                 
                 <!-- Filter & Search Bar -->
@@ -37,94 +77,73 @@ $active_menu = 'urus_pesanan';
                     <div class="search-group">
                         <div class="search-input-box">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="11" cy="11" r="8"></circle>
-                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                             </svg>
                             <input type="text" placeholder="Cari pesanan (ID/meja/nama)">
                         </div>
-                        <div class="select-search-by">
-                            <span>Cari Berdasarkan</span>
-                            <select>
-                                <option value="id">ID</option>
-                                <option value="meja">Meja</option>
-                                <option value="nama">Nama</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="time-filter-box">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
-                        </svg>
-                        <span>Filter Waktu:</span>
-                        <select>
-                            <option value="hari_ini">Hari ini</option>
-                            <option value="minggu_ini">Minggu ini</option>
-                            <option value="bulan_ini">Bulan ini</option>
-                        </select>
                     </div>
                 </div>
 
-                <!-- Tabel Riwayat Pesanan Masuk -->
+                <!-- TABEL PESANAN (DINAMIS DARI DATABASE) -->
                 <div class="table-responsive">
                     <table class="order-table">
                         <thead>
                             <tr>
                                 <th>ID</th>
                                 <th>Waktu Pesan</th>
+                                <th>Pelanggan / Meja</th>
                                 <th>Payment</th>
                                 <th>Status</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Baris 1: Selesai -->
-                            <tr>
-                                <td class="fw-bold">#067A</td>
-                                <td>26-08-2026, 14:45:47</td>
-                                <td>QRIS</td>
-                                <td><span class="badge badge-success">Selesai</span></td>
-                                <td class="action-btns">
-                                    <button class="btn-action btn-detail"><i class="icon-eye"></i> Detail</button>
-                                    <button class="btn-action btn-edit"><i class="icon-edit"></i> Edit</button>
-                                    <button class="btn-action btn-delete"><i class="icon-trash"></i> Hapus</button>
-                                </td>
-                            </tr>
-                            <!-- Baris 2: Diproses -->
-                            <tr>
-                                <td class="fw-bold">#067B</td>
-                                <td>26-08-2026, 15:12:03</td>
-                                <td>QRIS</td>
-                                <td><span class="badge badge-warning">Diproses</span></td>
-                                <td class="action-btns">
-                                    <button class="btn-action btn-detail">Detail</button>
-                                    <button class="btn-action btn-edit">Edit</button>
-                                    <button class="btn-action btn-delete">Hapus</button>
-                                </td>
-                            </tr>
-                            <!-- Baris 3: Menunggu -->
-                            <tr>
-                                <td class="fw-bold">#067C</td>
-                                <td>26-08-2026, 16:15:11</td>
-                                <td>Cash</td>
-                                <td><span class="badge badge-danger">Menunggu</span></td>
-                                <td class="action-btns">
-                                    <button class="btn-action btn-detail">Detail</button>
-                                    <button class="btn-action btn-edit">Edit</button>
-                                    <button class="btn-action btn-delete">Hapus</button>
-                                </td>
-                            </tr>
+                            <?php if (empty($orders)): ?>
+                                <tr>
+                                    <td colspan="6" style="text-align:center; padding: 20px;">Belum ada data pesanan di database.</td>
+                                </tr>
+                            <?php else: ?>
+                                <?php foreach ($orders as $o): ?>
+                                    <?php
+                                        // Penyesuaian warna badge status
+                                        $badge_class = 'badge-danger';
+                                        $status_label = 'Menunggu';
+                                        if (strtolower($o['status']) === 'selesai') {
+                                            $badge_class = 'badge-success';
+                                            $status_label = 'Selesai';
+                                        } elseif (strtolower($o['status']) === 'diproses') {
+                                            $badge_class = 'badge-warning';
+                                            $status_label = 'Diproses';
+                                        } elseif (strtolower($o['status']) === 'batal') {
+                                            $badge_class = 'badge-danger';
+                                            $status_label = 'Batal';
+                                        }
+                                    ?>
+                                    <tr style="<?= ($selected_id === $o['id_pesanan']) ? 'background-color: #EDE5DD;' : '' ?>">
+                                        <td class="fw-bold"><?= e($o['id_pesanan']) ?></td>
+                                        <td><?= date('d-m-Y, H:i:s', strtotime($o['waktu_pesan'])) ?></td>
+                                        <td><?= e($o['nama_pelanggan']) ?> (Meja <?= e($o['id_meja']) ?>)</td>
+                                        <td><?= strtoupper(e($o['metode'])) ?></td>
+                                        <td><span class="badge <?= $badge_class ?>"><?= $status_label ?></span></td>
+                                        <td class="action-btns">
+                                            <!-- Tombol Detail akan me-reload halaman dengan order_id yang dipilih -->
+                                            <a href="?order_id=<?= urlencode($o['id_pesanan']) ?>" class="btn-action btn-detail" style="text-decoration:none;">Detail</a>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
 
-                <!-- Box Detail / Edit Order Bawah -->
+                <!-- BOX DETAIL ORDER (DINAMIS BERDASARKAN ORDER YANG DIPILIH) -->
+                <?php if ($selected_order): ?>
                 <div class="detail-edit-card">
                     <div class="detail-header">
-                        Detail/Edit Order: ID #067A
+                        Detail/Edit Order: ID <?= e($selected_order['id_pesanan']) ?> (<?= e($selected_order['nama_pelanggan']) ?> - Meja <?= e($selected_order['id_meja']) ?>)
                     </div>
                     <div class="detail-body">
-                        <!-- Sisi Kiri: Tabel Menu yang Dipesan -->
+                        <!-- Sisi Kiri: Daftar Menu yang Dipesan -->
                         <div class="detail-left">
                             <table class="item-detail-table">
                                 <thead>
@@ -137,59 +156,58 @@ $active_menu = 'urus_pesanan';
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>French Fries</td>
-                                        <td>1</td>
-                                        <td>Rp15.000</td>
-                                        <td>Rp15.000</td>
-                                    </tr>
-                                    <tr>
-                                        <td>2</td>
-                                        <td>Nasi Goreng</td>
-                                        <td>1</td>
-                                        <td>Rp18.000</td>
-                                        <td>Rp18.000</td>
-                                    </tr>
-                                    <tr>
-                                        <td>3</td>
-                                        <td>Ice Chocolate</td>
-                                        <td>1</td>
-                                        <td>Rp12.000</td>
-                                        <td>Rp12.000</td>
-                                    </tr>
+                                    <?php if (empty($order_items)): ?>
+                                        <tr><td colspan="5" style="text-align:center;">Tidak ada item pesanan.</td></tr>
+                                    <?php else: ?>
+                                        <?php $no = 1; foreach ($order_items as $item): ?>
+                                            <tr>
+                                                <td><?= $no++ ?></td>
+                                                <td>
+                                                    <strong><?= e($item['nama_menu']) ?></strong>
+                                                    <?php if (!empty($item['catatan'])): ?>
+                                                        <br><small style="color: #8C5435;">Catatan: <?= e($item['catatan']) ?></small>
+                                                    <?php endif; ?>
+                                                </td>
+                                                <td><?= e($item['jumlah']) ?></td>
+                                                <td>Rp<?= number_format($item['harga_satuan'], 0, ',', '.') ?></td>
+                                                <td>Rp<?= number_format($item['subtotal'], 0, ',', '.') ?></td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
                                 </tbody>
                             </table>
                             <div class="total-bar">
-                                Total Bayar : Rp45.000
+                                Total Bayar : Rp<?= number_format($selected_order['total'], 0, ',', '.') ?>
                             </div>
                         </div>
 
-                        <!-- Sisi Kanan: Panel Konfirmasi Kasir -->
+                        <!-- Sisi Kanan: Panel Update Status Kasir -->
                         <div class="detail-right">
-                            <label class="form-label">Tipe Pembayaran</label>
-                            <div class="payment-toggle">
-                                <button type="button" class="btn-pay active">Cash</button>
-                                <button type="button" class="btn-pay">QRIS</button>
-                            </div>
+                            <form method="POST" action="update_status_pesanan.php">
+                                <input type="hidden" name="id_pesanan" value="<?= e($selected_order['id_pesanan']) ?>">
+                                
+                                <label class="form-label">Tipe Pembayaran</label>
+                                <div class="payment-toggle">
+                                    <button type="button" class="btn-pay active">Cash</button>
+                                    <button type="button" class="btn-pay">QRIS</button>
+                                </div>
 
-                            <label class="form-label">ID Pembayaran</label>
-                            <input type="text" class="input-id-payment" placeholder="">
+                                <label class="form-label">Status Pesanan</label>
+                                <div class="status-toggle">
+                                    <button type="button" class="btn-status-pick danger <?= $selected_order['status'] === 'menunggu_pembayaran' ? 'active' : '' ?>">Menunggu</button>
+                                    <button type="button" class="btn-status-pick warning <?= $selected_order['status'] === 'diproses' ? 'active' : '' ?>">Diproses</button>
+                                    <button type="button" class="btn-status-pick success <?= $selected_order['status'] === 'selesai' ? 'active' : '' ?>">Selesai</button>
+                                </div>
 
-                            <label class="form-label">Status</label>
-                            <div class="status-toggle">
-                                <button type="button" class="btn-status-pick danger active">Menunggu</button>
-                                <button type="button" class="btn-status-pick warning">Diproses</button>
-                                <button type="button" class="btn-status-pick success">Selesai</button>
-                            </div>
-
-                            <div class="form-actions">
-                                <button type="button" class="btn-cancel">Batal</button>
-                                <button type="submit" class="btn-save">Simpan</button>
-                            </div>
+                                <div class="form-actions" style="margin-top: 20px;">
+                                    <button type="button" class="btn-cancel" onclick="location.href='urus_pesanan.php'">Batal</button>
+                                    <button type="submit" class="btn-save">Simpan Perubahan</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
+                <?php endif; ?>
 
             </div>
         </main>
