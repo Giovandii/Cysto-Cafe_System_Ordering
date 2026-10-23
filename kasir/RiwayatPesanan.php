@@ -1,25 +1,46 @@
 <?php
 session_start();
 
-// Proteksi: pastikan sudah login (baik sebagai admin maupun kasir)
 if (!isset($_SESSION['user_id'])) {
-    header('Location: LoginForKasir.php');
+    header('Location: LoginForAdmin.php');
     exit;
 }
 
-// 1. Tentukan menu aktif di sidebar
-$active_menu = 'riwayat_pesanan';
+$active_menu = 'RiwayatPesanan';
 
-// 2. Filter Status & Waktu dari URL (Default: Semua & Hari ini)
-$filter_status = $_GET['status'] ?? 'semua';
-$filter_waktu  = $_GET['waktu'] ?? 'hari_ini';
-$search_query  = $_GET['q'] ?? '';
-$search_by     = $_GET['by'] ?? 'id';
-
-// Hubungkan koneksi database (opsional jika sudah mau query riil)
 require_once __DIR__ . '/../includes/koneksi.php';
 require_once __DIR__ . '/../includes/helpers.php';
+
+// Filter Status dari tombol tab di atas
+$filter_status = $_GET['status'] ?? 'semua';
+$filter_waktu = $_GET['waktu'] ?? 'hari_ini';
+$search_query = $_GET['q'] ?? '';
+$search_by = $_GET['by'] ?? 'id';
+
+// Susun Query Berdasarkan Filter
+$sql = "
+    SELECT p.id_pesanan, p.waktu_pesan, p.nama_pelanggan, p.id_meja, p.total, p.status,
+           COALESCE(t.metode, '-') AS metode, t.waktu_transaksi
+    FROM pesanan p
+    LEFT JOIN transaksi t ON p.id_pesanan = t.id_pesanan
+    WHERE 1=1
+";
+
+$params = [];
+
+if ($filter_status === 'terlayani') {
+    $sql .= " AND LOWER(p.status) = 'selesai'";
+} elseif ($filter_status === 'batal') {
+    $sql .= " AND LOWER(p.status) = 'batal'";
+}
+
+$sql .= " ORDER BY p.waktu_pesan DESC";
+
+$stmt = $pdo->prepare($sql);
+$stmt->execute($params);
+$history_orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -108,47 +129,34 @@ require_once __DIR__ . '/../includes/helpers.php';
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Data Baris 1: Selesai / Terlayani -->
-                            <tr>
-                                <td class="fw-bold">#55C</td>
-                                <td>26-08-2026, 14:45:47</td>
-                                <td>Budi (Meja 03)</td>
-                                <td>QRIS</td>
-                                <td class="fw-bold">Rp 45.000</td>
-                                <td><span class="badge badge-success">Terlayani</span></td>
-                                <td class="action-btns">
-                                    <button class="btn-action btn-detail" onclick="bukaModal('#55C')">Detail</button>
-                                    <button class="btn-action" onclick="window.print()">Cetak</button>
-                                </td>
-                            </tr>
-
-                            <!-- Data Baris 2: Selesai / Terlayani -->
-                            <tr>
-                                <td class="fw-bold">#54A</td>
-                                <td>26-08-2026, 13:10:02</td>
-                                <td>Sarah (Meja 01)</td>
-                                <td>Cash</td>
-                                <td class="fw-bold">Rp 30.000</td>
-                                <td><span class="badge badge-success">Terlayani</span></td>
-                                <td class="action-btns">
-                                    <button class="btn-action btn-detail">Detail</button>
-                                    <button class="btn-action" onclick="window.print()">Cetak</button>
-                                </td>
-                            </tr>
-
-                            <!-- Data Baris 3: Batal -->
-                            <tr>
-                                <td class="fw-bold">#53B</td>
-                                <td>26-08-2026, 12:20:15</td>
-                                <td>Rian (Meja 05)</td>
-                                <td>-</td>
-                                <td class="fw-bold">Rp 18.000</td>
-                                <td><span class="badge badge-danger">Batal</span></td>
-                                <td class="action-btns">
-                                    <button class="btn-action btn-detail">Detail</button>
-                                </td>
-                            </tr>
-                        </tbody>
+    <?php if (empty($history_orders)): ?>
+        <tr>
+            <td colspan="7" style="text-align: center; padding: 20px;">Tidak ada riwayat transaksi yang ditemukan.</td>
+        </tr>
+    <?php else: ?>
+        <?php foreach ($history_orders as $h): ?>
+            <?php
+                $is_selesai = strtolower($h['status']) === 'selesai';
+                $badge_class = $is_selesai ? 'badge-success' : 'badge-danger';
+                $label = $is_selesai ? 'Terlayani' : 'Batal';
+            ?>
+            <tr>
+                <td class="fw-bold"><?= e($h['id_pesanan']) ?></td>
+                <td><?= date('d-m-Y, H:i:s', strtotime($h['waktu_pesan'])) ?></td>
+                <td><?= e($h['nama_pelanggan']) ?> (Meja <?= e($h['id_meja']) ?>)</td>
+                <td><?= strtoupper(e($h['metode'])) ?></td>
+                <td class="fw-bold">Rp<?= number_format($h['total'], 0, ',', '.') ?></td>
+                <td><span class="badge <?= $badge_class ?>"><?= $label ?></span></td>
+                <td class="action-btns">
+                    <a href="?order_id=<?= urlencode($h['id_pesanan']) ?>&status=<?= e($filter_status) ?>" class="btn-action btn-detail" style="text-decoration:none;">Detail</a>
+                    <?php if ($is_selesai): ?>
+                        <button class="btn-action" onclick="window.print()">Cetak</button>
+                    <?php endif; ?>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    <?php endif; ?>
+</tbody>
                     </table>
                 </div>
 

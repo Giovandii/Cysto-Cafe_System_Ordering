@@ -3,7 +3,7 @@ session_start();
 
 // Proteksi Login
 if (!isset($_SESSION['user_id'])) {
-    header('Location: LoginForKasir.php');
+    header('Location: LoginForAdmin.php');
     exit;
 }
 
@@ -12,6 +12,10 @@ $active_menu = 'UrusPesanan';
 // 1. Hubungkan ke database & helper
 require_once __DIR__ . '/../includes/koneksi.php';
 require_once __DIR__ . '/../includes/helpers.php';
+
+$search_query = $_GET['q'] ?? '';
+$search_by = $_GET['by'] ?? 'id';
+$filter_waktu = $_GET['waktu'] ?? 'hari ini';
 
 // 2. Query Mengambil Daftar Pesanan Aktif + Metode Pembayaran (jika ada)
 $sql = "
