@@ -200,7 +200,7 @@ if (!empty($selected_id)) {
                                 </div>
 
                                 <div class="form-actions" style="margin-top: 20px;">
-                                    <button type="button" class="btn-cancel" onclick="location.href='urus_pesanan.php'">Batal</button>
+                                    <button type="button" class="btn-cancel" onclick="location.href='UrusPesanan.php'">Batal</button>
                                     <button type="submit" class="btn-save">Simpan Perubahan</button>
                                 </div>
                             </form>

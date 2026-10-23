@@ -13,6 +13,10 @@ $active_menu = 'UrusPesanan';
 require_once __DIR__ . '/../includes/koneksi.php';
 require_once __DIR__ . '/../includes/helpers.php';
 
+$search_query = $_GET['q'] ?? '';
+$search_by = $_GET['by'] ?? 'id';
+$filter_waktu = $_GET['waktu'] ?? 'hari ini';
+
 // 2. Query Mengambil Daftar Pesanan Aktif + Metode Pembayaran (jika ada)
 $sql = "
     SELECT p.id_pesanan, p.waktu_pesan, p.nama_pelanggan, p.id_meja, p.total, p.status,
@@ -200,7 +204,7 @@ if (!empty($selected_id)) {
                                 </div>
 
                                 <div class="form-actions" style="margin-top: 20px;">
-                                    <button type="button" class="btn-cancel" onclick="location.href='urus_pesanan.php'">Batal</button>
+                                    <button type="button" class="btn-cancel" onclick="location.href='UrusPesanan.php'">Batal</button>
                                     <button type="submit" class="btn-save">Simpan Perubahan</button>
                                 </div>
                             </form>
