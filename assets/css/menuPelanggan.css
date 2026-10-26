@@ -1,0 +1,283 @@
+
+        :root {
+            --bg-page: #F7F4EE;
+            --color-primary: #5C4033;
+            --color-primary-dark: #432E24;
+            --color-text-title: #382519;
+            --color-border: #C8B8A6;
+            --font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #E5E5E5;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            font-family: var(--font-serif);
+        }
+
+        /* Container Tampilan Ponsel */
+        .mobile-container {
+            width: 100%;
+            max-width: 410px;
+            min-height: 100vh;
+            background-color: var(--bg-page);
+            padding: 24px 20px 100px 20px; /* Padding bawah untuk Floating Cart */
+            position: relative;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+        }
+
+        /* 1. Header: Logo Brand & Badge Meja */
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .brand-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-icon {
+            color: var(--color-primary);
+            display: flex;
+            align-items: center;
+        }
+
+        .brand-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--color-primary);
+            letter-spacing: 0.5px;
+        }
+
+        .table-pill {
+            background-color: #FFFFFF;
+            border: 1.5px solid var(--color-border);
+            border-radius: 12px;
+            padding: 6px 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--color-primary);
+            font-size: 13.5px;
+            font-weight: 700;
+        }
+
+        /* 2. Search Bar */
+        .search-box {
+            width: 100%;
+            background-color: #FFFFFF;
+            border: 1.5px solid var(--color-border);
+            border-radius: 14px;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .search-box svg {
+            color: #8C7D70;
+        }
+
+        .search-box input {
+            border: none;
+            outline: none;
+            width: 100%;
+            font-family: inherit;
+            font-size: 14px;
+            background: transparent;
+            color: var(--color-text-title);
+        }
+
+        .search-box input::placeholder {
+            color: #9E8F82;
+        }
+
+        /* 3. Category Filter Tabs */
+        .category-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 22px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .category-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab-btn {
+            flex: 1;
+            text-align: center;
+            padding: 8px 0;
+            border-radius: 16px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            color: var(--color-primary);
+            background-color: #FFFFFF;
+            border: 1.5px solid var(--color-border);
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .tab-btn.active {
+            background-color: var(--color-primary);
+            color: #FFFFFF;
+            border-color: var(--color-primary);
+        }
+
+        /* 4. Menu Grid (2 Kolom Presisi) */
+        .menu-grid-2col {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .menu-card {
+            background-color: #FFFFFF;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 4px 14px rgba(92, 64, 51, 0.08);
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #ECE3DA;
+            transition: transform 0.2s ease;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .card-img-wrap {
+            width: 100%;
+            height: 125px;
+            background-color: #EFE8DF;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-body {
+            padding: 10px 12px 12px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 6px;
+        }
+
+        .card-info {
+            flex: 1;
+        }
+
+        .card-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--color-text-title);
+            margin-bottom: 4px;
+            line-height: 1.25;
+        }
+
+        .card-price {
+            font-size: 12px;
+            font-weight: 600;
+            color: #6B5547;
+        }
+
+        .btn-plus {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background-color: var(--color-primary);
+            color: #FFFFFF;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+
+        .btn-plus:hover {
+            background-color: var(--color-primary-dark);
+        }
+
+        /* 5. Sticky Floating Bottom Cart Bar */
+        .bottom-cart-bar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 40px);
+            max-width: 370px;
+            background-color: var(--color-primary);
+            border-radius: 18px;
+            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            color: #FFFFFF;
+            box-shadow: 0 8px 24px rgba(74, 51, 40, 0.35);
+            text-decoration: none;
+            z-index: 999;
+            transition: transform 0.2s ease;
+        }
+
+        .bottom-cart-bar:hover {
+            transform: translateX(-50%) translateY(-2px);
+        }
+
+        .cart-icon-group {
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding-right: 14px;
+            border-right: 1px solid rgba(255, 255, 255, 0.25);
+        }
+
+        .cart-badge-count {
+            position: absolute;
+            top: -6px;
+            right: 6px;
+            background-color: #B82C2C;
+            color: #FFFFFF;
+            font-size: 10px;
+            font-weight: bold;
+            width: 17px;
+            height: 17px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1.5px solid var(--color-primary);
+        }
+
+        .cart-total-text {
+            flex: 1;
+            padding-left: 14px;
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+
+        .cart-arrow {
+            display: flex;
+            align-items: center;
+        }
