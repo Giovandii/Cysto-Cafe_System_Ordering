@@ -98,7 +98,7 @@ if (!empty($selected_id)) {
                             <tr>
                                 <th>ID</th>
                                 <th>Waktu Pesan</th>
-                                <th>Pelanggan / Meja</th>
+                                <th>Meja</th>
                                 <th>Payment</th>
                                 <th>Status</th>
                                 <th>Aksi</th>
@@ -129,7 +129,7 @@ if (!empty($selected_id)) {
                                     <tr style="<?= ($selected_id === $o['id_pesanan']) ? 'background-color: #EDE5DD;' : '' ?>">
                                         <td class="fw-bold"><?= e($o['id_pesanan']) ?></td>
                                         <td><?= date('d-m-Y, H:i:s', strtotime($o['waktu_pesan'])) ?></td>
-                                        <td><?= e($o['nama_pelanggan']) ?> (Meja <?= e($o['id_meja']) ?>)</td>
+                                        <td>Meja <?= e($o['id_meja']) ?></td>
                                         <td><?= strtoupper(e($o['metode'])) ?></td>
                                         <td><span class="badge <?= $badge_class ?>"><?= $status_label ?></span></td>
                                         <td class="action-btns">
@@ -147,7 +147,7 @@ if (!empty($selected_id)) {
                 <?php if ($selected_order): ?>
                     <div class="detail-edit-card">
                         <div class="detail-header">
-                            Detail/Edit Order: ID <?= e($selected_order['id_pesanan']) ?> (<?= e($selected_order['nama_pelanggan']) ?> - Meja <?= e($selected_order['id_meja']) ?>)
+                            Detail/Edit Order: ID <?= e($selected_order['id_pesanan']) ?> <?= e($selected_order['id_meja']) ?>
                         </div>
                         <div class="detail-body">
                             <!-- Sisi Kiri: Daftar Menu yang Dipesan -->
@@ -201,7 +201,7 @@ if (!empty($selected_id)) {
                                     <div class="payment-toggle">
                                         <select name="metode" class="form-control" style="width: 100%; height: 36px; border-radius: 8px; border: 1px solid #CFC5B8; padding: 0 10px; font-family: inherit;">
                                             <option value="Cash">Cash (Tunai)</option>
-                                            <option value="QRIS">QRIS</option>
+                                            <!-- <option value="QRIS">QRIS</option> -->
                                         </select>
                                     </div>
 
