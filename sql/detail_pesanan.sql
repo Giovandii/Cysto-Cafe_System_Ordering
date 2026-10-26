@@ -17,4 +17,4 @@ INSERT INTO detail_pesanan (id_pesanan, id_menu, jumlah, harga_satuan, subtotal,
 -- Rincian untuk ORD-067A (Total: 45.000)
 ('ORD-067A', 1, 1, 15000.00, 15000.00, 'Saus sambal dipisah'),
 ('ORD-067A', 2, 1, 18000.00, 18000.00, 'Pedas sedang'),
-('ORD-067A', 3, 1, 12000.00, 12000.00, 'Less ice'),
+('ORD-067A', 3, 1, 12000.00, 12000.00, 'Less ice');
