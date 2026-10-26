@@ -55,12 +55,14 @@ if (!empty($selected_id)) {
 ?>
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Urus Pesanan - Cafe Menu</title>
     <link rel="stylesheet" href="../assets/css/dashboard.css">
 </head>
+
 <body class="dashboard-body">
 
     <div class="dashboard-layout">
@@ -75,13 +77,14 @@ if (!empty($selected_id)) {
             </div>
 
             <div class="order-main-panel">
-                
+
                 <!-- Filter & Search Bar -->
                 <div class="filter-bar">
                     <div class="search-group">
                         <div class="search-input-box">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                             </svg>
                             <input type="text" placeholder="Cari pesanan (ID/meja/nama)">
                         </div>
@@ -109,19 +112,19 @@ if (!empty($selected_id)) {
                             <?php else: ?>
                                 <?php foreach ($orders as $o): ?>
                                     <?php
-                                        // Penyesuaian warna badge status
+                                    // Penyesuaian warna badge status
+                                    $badge_class = 'badge-danger';
+                                    $status_label = 'Menunggu';
+                                    if (strtolower($o['status']) === 'selesai') {
+                                        $badge_class = 'badge-success';
+                                        $status_label = 'Selesai';
+                                    } elseif (strtolower($o['status']) === 'diproses') {
+                                        $badge_class = 'badge-warning';
+                                        $status_label = 'Diproses';
+                                    } elseif (strtolower($o['status']) === 'batal') {
                                         $badge_class = 'badge-danger';
-                                        $status_label = 'Menunggu';
-                                        if (strtolower($o['status']) === 'selesai') {
-                                            $badge_class = 'badge-success';
-                                            $status_label = 'Selesai';
-                                        } elseif (strtolower($o['status']) === 'diproses') {
-                                            $badge_class = 'badge-warning';
-                                            $status_label = 'Diproses';
-                                        } elseif (strtolower($o['status']) === 'batal') {
-                                            $badge_class = 'badge-danger';
-                                            $status_label = 'Batal';
-                                        }
+                                        $status_label = 'Batal';
+                                    }
                                     ?>
                                     <tr style="<?= ($selected_id === $o['id_pesanan']) ? 'background-color: #EDE5DD;' : '' ?>">
                                         <td class="fw-bold"><?= e($o['id_pesanan']) ?></td>
@@ -142,75 +145,84 @@ if (!empty($selected_id)) {
 
                 <!-- BOX DETAIL ORDER (DINAMIS BERDASARKAN ORDER YANG DIPILIH) -->
                 <?php if ($selected_order): ?>
-                <div class="detail-edit-card">
-                    <div class="detail-header">
-                        Detail/Edit Order: ID <?= e($selected_order['id_pesanan']) ?> (<?= e($selected_order['nama_pelanggan']) ?> - Meja <?= e($selected_order['id_meja']) ?>)
-                    </div>
-                    <div class="detail-body">
-                        <!-- Sisi Kiri: Daftar Menu yang Dipesan -->
-                        <div class="detail-left">
-                            <table class="item-detail-table">
-                                <thead>
-                                    <tr>
-                                        <th>No.</th>
-                                        <th>Nama Item</th>
-                                        <th>Jumlah</th>
-                                        <th>Harga</th>
-                                        <th>Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php if (empty($order_items)): ?>
-                                        <tr><td colspan="5" style="text-align:center;">Tidak ada item pesanan.</td></tr>
-                                    <?php else: ?>
-                                        <?php $no = 1; foreach ($order_items as $item): ?>
+                    <div class="detail-edit-card">
+                        <div class="detail-header">
+                            Detail/Edit Order: ID <?= e($selected_order['id_pesanan']) ?> (<?= e($selected_order['nama_pelanggan']) ?> - Meja <?= e($selected_order['id_meja']) ?>)
+                        </div>
+                        <div class="detail-body">
+                            <!-- Sisi Kiri: Daftar Menu yang Dipesan -->
+                            <div class="detail-left">
+                                <table class="item-detail-table">
+                                    <thead>
+                                        <tr>
+                                            <th>No.</th>
+                                            <th>Nama Item</th>
+                                            <th>Jumlah</th>
+                                            <th>Harga</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php if (empty($order_items)): ?>
                                             <tr>
-                                                <td><?= $no++ ?></td>
-                                                <td>
-                                                    <strong><?= e($item['nama_menu']) ?></strong>
-                                                    <?php if (!empty($item['catatan'])): ?>
-                                                        <br><small style="color: #8C5435;">Catatan: <?= e($item['catatan']) ?></small>
-                                                    <?php endif; ?>
-                                                </td>
-                                                <td><?= e($item['jumlah']) ?></td>
-                                                <td>Rp<?= number_format($item['harga_satuan'], 0, ',', '.') ?></td>
-                                                <td>Rp<?= number_format($item['subtotal'], 0, ',', '.') ?></td>
+                                                <td colspan="5" style="text-align:center;">Tidak ada item pesanan.</td>
                                             </tr>
-                                        <?php endforeach; ?>
-                                    <?php endif; ?>
-                                </tbody>
-                            </table>
-                            <div class="total-bar">
-                                Total Bayar : Rp<?= number_format($selected_order['total'], 0, ',', '.') ?>
+                                        <?php else: ?>
+                                            <?php $no = 1;
+                                            foreach ($order_items as $item): ?>
+                                                <tr>
+                                                    <td><?= $no++ ?></td>
+                                                    <td>
+                                                        <strong><?= e($item['nama_menu']) ?></strong>
+                                                        <?php if (!empty($item['catatan'])): ?>
+                                                            <br><small style="color: #8C5435;">Catatan: <?= e($item['catatan']) ?></small>
+                                                        <?php endif; ?>
+                                                    </td>
+                                                    <td><?= e($item['jumlah']) ?></td>
+                                                    <td>Rp<?= number_format($item['harga_satuan'], 0, ',', '.') ?></td>
+                                                    <td>Rp<?= number_format($item['subtotal'], 0, ',', '.') ?></td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </tbody>
+                                </table>
+                                <div class="total-bar">
+                                    Total Bayar : Rp<?= number_format($selected_order['total'], 0, ',', '.') ?>
+                                </div>
+                            </div>
+
+                            <!-- Sisi Kanan: Panel Update Status Kasir -->
+                            <div class="detail-right">
+                                <form method="POST" action="">
+                                    <input type="hidden" name="action" value="update_order">
+                                    <input type="hidden" name="id_pesanan" value="<?= e($selected_order['id_pesanan']) ?>">
+
+                                    <label class="form-label">Tipe Pembayaran</label>
+                                    <div class="payment-toggle">
+                                        <select name="metode" class="form-control" style="width: 100%; height: 36px; border-radius: 8px; border: 1px solid #CFC5B8; padding: 0 10px; font-family: inherit;">
+                                            <option value="Cash">Cash (Tunai)</option>
+                                            <option value="QRIS">QRIS</option>
+                                        </select>
+                                    </div>
+
+                                    <label class="form-label" style="margin-top: 10px;">Status Pesanan</label>
+                                    <div class="status-toggle">
+                                        <select name="status" class="form-control" style="width: 100%; height: 36px; border-radius: 8px; border: 1px solid #CFC5B8; padding: 0 10px; font-family: inherit;">
+                                            <option value="menunggu_pembayaran" <?= $selected_order['status'] === 'menunggu_pembayaran' ? 'selected' : '' ?>>Menunggu Pembayaran</option>
+                                            <option value="diproses" <?= $selected_order['status'] === 'diproses' ? 'selected' : '' ?>>Diproses (Sedang Dimasak)</option>
+                                            <option value="selesai" <?= $selected_order['status'] === 'selesai' ? 'selected' : '' ?>>Selesai (Sudah Lunas)</option>
+                                            <option value="batal" <?= $selected_order['status'] === 'batal' ? 'selected' : '' ?>>Batal</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-actions" style="margin-top: 20px;">
+                                        <button type="button" class="btn-cancel" onclick="location.href='UrusPesanan.php'">Batal</button>
+                                        <button type="submit" class="btn-save">Simpan Perubahan</button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
-
-                        <!-- Sisi Kanan: Panel Update Status Kasir -->
-                        <div class="detail-right">
-                            <form method="POST" action="update_status_pesanan.php">
-                                <input type="hidden" name="id_pesanan" value="<?= e($selected_order['id_pesanan']) ?>">
-                                
-                                <label class="form-label">Tipe Pembayaran</label>
-                                <div class="payment-toggle">
-                                    <button type="button" class="btn-pay active">Cash</button>
-                                    <button type="button" class="btn-pay">QRIS</button>
-                                </div>
-
-                                <label class="form-label">Status Pesanan</label>
-                                <div class="status-toggle">
-                                    <button type="button" class="btn-status-pick danger <?= $selected_order['status'] === 'menunggu_pembayaran' ? 'active' : '' ?>">Menunggu</button>
-                                    <button type="button" class="btn-status-pick warning <?= $selected_order['status'] === 'diproses' ? 'active' : '' ?>">Diproses</button>
-                                    <button type="button" class="btn-status-pick success <?= $selected_order['status'] === 'selesai' ? 'active' : '' ?>">Selesai</button>
-                                </div>
-
-                                <div class="form-actions" style="margin-top: 20px;">
-                                    <button type="button" class="btn-cancel" onclick="location.href='UrusPesanan.php'">Batal</button>
-                                    <button type="submit" class="btn-save">Simpan Perubahan</button>
-                                </div>
-                            </form>
-                        </div>
                     </div>
-                </div>
                 <?php endif; ?>
 
             </div>
@@ -218,4 +230,5 @@ if (!empty($selected_id)) {
     </div>
 
 </body>
+
 </html>
