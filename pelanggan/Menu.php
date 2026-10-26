@@ -3,7 +3,15 @@ session_start();
 
 // 1. TANGKAP NOMOR MEJA DARI LINK QR (Contoh: menu.php?meja=5)
 if (isset($_GET['meja'])) {
-    $_SESSION['id_meja'] = (int)$_GET['meja'];
+    $meja_baru = (int)$_GET['meja'];
+
+    // JIKA NOMOR MEJA BERBEDA DENGAN SESI SEBELUMNYA:
+    // Anggap ini pesanan baru di meja baru, jadi BERSIHKAN KERANJANG!
+    if (isset($_SESSION['id_meja']) && $_SESSION['id_meja'] !== $meja_baru) {
+        unset($_SESSION['keranjang']);
+    }
+
+    $_SESSION['id_meja'] = $meja_baru;
 }
 
 // Proteksi: Jika pelanggan masuk tanpa nomor meja
@@ -18,18 +26,66 @@ if (empty($_SESSION['id_meja'])) {
 
 $nomor_meja = $_SESSION['id_meja'];
 
-// 2. HUBUNGKAN KE DATABASE & HELPERS
+// 2. TANGKAP REQUEST TAMBAH KERANJANG DARI JAVASCRIPT (AJAX)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'tambah_keranjang') {
+    $id     = (int)$_POST['id_menu'];
+    $nama   = $_POST['nama'];
+    $harga  = (float)$_POST['harga'];
+    $gambar = $_POST['gambar'] ?? 'default-menu.png';
+
+    if (!isset($_SESSION['keranjang'])) {
+        $_SESSION['keranjang'] = [];
+    }
+
+    if (isset($_SESSION['keranjang'][$id])) {
+        $_SESSION['keranjang'][$id]['jumlah'] += 1;
+    } else {
+        $_SESSION['keranjang'][$id] = [
+            'id_menu' => $id,
+            'nama'    => $nama,
+            'harga'   => $harga,
+            'jumlah'  => 1,
+            'gambar'  => $gambar
+        ];
+    }
+
+    $total_item  = 0;
+    $total_harga = 0;
+    foreach ($_SESSION['keranjang'] as $item) {
+        $total_item  += $item['jumlah'];
+        $total_harga += ($item['harga'] * $item['jumlah']);
+    }
+
+    header('Content-Type: application/json');
+    echo json_encode([
+        'status'       => 'success',
+        'total_item'   => $total_item,
+        'total_format' => 'Rp. ' . number_format($total_harga, 0, ',', '.')
+    ]);
+    exit;
+}
+
+// 3. HITUNG JUMLAH KERANJANG SAAT HALAMAN DIBUKA / DI-RELOAD
+$cart_count = 0;
+$cart_total = 0;
+if (!empty($_SESSION['keranjang'])) {
+    foreach ($_SESSION['keranjang'] as $item) {
+        $cart_count += $item['jumlah'];
+        $cart_total += ($item['harga'] * $item['jumlah']);
+    }
+}
+
+// 4. HUBUNGKAN KE DATABASE & HELPERS
 require_once __DIR__ . '/../includes/koneksi.php';
 require_once __DIR__ . '/../includes/helpers.php';
 
-// 3. FILTER KATEGORI & PENCARIAN
+// 5. FILTER KATEGORI & PENCARIAN
 $kategori = strtolower($_GET['kategori'] ?? 'semua');
 $search   = trim($_GET['q'] ?? '');
 
 $sql = "SELECT * FROM menu WHERE 1=1";
 $params = [];
 
-// Filter Kategori
 if ($kategori !== 'semua') {
     $kategori_map = [
         'makanan' => 'food',
@@ -41,7 +97,6 @@ if ($kategori !== 'semua') {
     $params[':kategori'] = $kat_db;
 }
 
-// Filter Pencarian Menu
 if ($search !== '') {
     $sql .= " AND LOWER(nama) LIKE :search";
     $params[':search'] = '%' . strtolower($search) . '%';
@@ -62,14 +117,14 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../assets/css/menuPelanggan.css">
     <title>Cysto Cafe - Meja <?= e($nomor_meja) ?></title>
+    <link rel="stylesheet" href="../assets/css/menuPelanggan.css">
 </head>
 <body>
 
     <div class="mobile-container">
         
-        <!-- 1. Header: Brand "Cysto" & Nomor Meja -->
+        <!-- Header -->
         <header class="top-header">
             <div class="brand-area">
                 <div class="brand-icon">
@@ -91,7 +146,7 @@ try {
             </div>
         </header>
 
-        <!-- 2. Form Pencarian Menu -->
+        <!-- Search -->
         <form method="GET" action="" class="search-box">
             <input type="hidden" name="kategori" value="<?= e($kategori) ?>">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -101,7 +156,7 @@ try {
             <input type="text" name="q" placeholder="Cari Menu..." value="<?= e($search) ?>" autocomplete="off">
         </form>
 
-        <!-- 3. Filter Kategori Tabs: Semua, Makanan, Minuman, Snack -->
+        <!-- Kategori -->
         <nav class="category-tabs">
             <a href="?kategori=semua" class="tab-btn <?= $kategori === 'semua' ? 'active' : '' ?>">Semua</a>
             <a href="?kategori=makanan" class="tab-btn <?= $kategori === 'makanan' ? 'active' : '' ?>">Makanan</a>
@@ -109,7 +164,7 @@ try {
             <a href="?kategori=snack" class="tab-btn <?= $kategori === 'snack' ? 'active' : '' ?>">Snack</a>
         </nav>
 
-        <!-- 4. Grid Menu (2 Kolom Dinamis dari PostgreSQL) -->
+        <!-- Grid Menu -->
         <main class="menu-grid-2col">
             <?php if (empty($menus)): ?>
                 <div style="grid-column: 1 / -1; text-align: center; padding: 40px 10px; color: #7A6252;">
@@ -129,8 +184,9 @@ try {
                                 <h3 class="card-title"><?= e($m['nama']) ?></h3>
                                 <p class="card-price">Rp. <?= number_format($m['harga'], 0, ',', '.') ?></p>
                             </div>
-                            <!-- Tombol Plus Tambah Item -->
-                            <button type="button" class="btn-plus" onclick="tambahItem('<?= e($m['nama']) ?>', <?= (int)$m['harga'] ?>)" title="Tambah ke keranjang">
+                            <button type="button" class="btn-plus" 
+                                    onclick="tambahItem(<?= $m['id_menu'] ?>, '<?= e($m['nama']) ?>', <?= (int)$m['harga'] ?>, '<?= e($m['gambar'] ?? 'default-menu.png') ?>')" 
+                                    title="Tambah ke keranjang">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                     <line x1="12" y1="5" x2="12" y2="19"></line>
                                     <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -142,17 +198,16 @@ try {
             <?php endif; ?>
         </main>
 
-        <!-- 5. Floating Bottom Cart Bar -->
-        <a href="checkout.php" class="bottom-cart-bar" id="cartBar">
+        <!-- Floating Cart Bar mengarah ke keranjang.php -->
+        <a href="keranjang.php" class="bottom-cart-bar" id="cartBar">
             <div class="cart-icon-group">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="9" cy="21" r="1"></circle>
-                    <circle cx="20" cy="21" r="1"></circle>
+                    <circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle>
                     <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
                 </svg>
-                <span class="cart-badge-count" id="cartCount">0</span>
+                <span class="cart-badge-count" id="cartCount"><?= $cart_count ?></span>
             </div>
-            <span class="cart-total-text" id="cartTotal">Total : Rp. 0</span>
+            <span class="cart-total-text" id="cartTotal">Total : Rp. <?= number_format($cart_total, 0, ',', '.') ?></span>
             <div class="cart-arrow">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="9 18 15 12 9 6"></polyline>
@@ -162,26 +217,33 @@ try {
 
     </div>
 
-    <!-- Script Interaktif untuk Update Keranjang -->
+    <!-- Script AJAX -->
     <script>
-        let totalBelanja = 0;
-        let totalItem = 0;
+    function tambahItem(id, nama, harga, gambar) {
+        const formData = new FormData();
+        formData.append('action', 'tambah_keranjang');
+        formData.append('id_menu', id);
+        formData.append('nama', nama);
+        formData.append('harga', harga);
+        formData.append('gambar', gambar);
 
-        function tambahItem(nama, harga) {
-            totalItem += 1;
-            totalBelanja += harga;
+        fetch('', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('cartCount').innerText = data.total_item;
+            document.getElementById('cartTotal').innerText = 'Total : ' + data.total_format;
 
-            // Update Tampilan Bar Bawah
-            document.getElementById('cartCount').innerText = totalItem;
-            document.getElementById('cartTotal').innerText = 'Total : Rp. ' + totalBelanja.toLocaleString('id-ID');
-
-            // Animasi sedikit membesar saat item ditambah
             const cartBar = document.getElementById('cartBar');
             cartBar.style.transform = 'translateX(-50%) scale(1.03)';
             setTimeout(() => {
                 cartBar.style.transform = 'translateX(-50%) scale(1)';
             }, 150);
-        }
+        })
+        .catch(err => console.error('Error tambah item:', err));
+    }
     </script>
 
 </body>

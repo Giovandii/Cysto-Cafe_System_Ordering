@@ -30,8 +30,6 @@ $params = [];
 
 if ($filter_status === 'terlayani') {
     $sql .= " AND LOWER(p.status) = 'selesai'";
-} elseif ($filter_status === 'batal') {
-    $sql .= " AND LOWER(p.status) = 'batal'";
 }
 
 $sql .= " ORDER BY p.waktu_pesan DESC";
