@@ -26,12 +26,6 @@ foreach ($_SESSION['keranjang'] as $item) {
 $pesan_sukses = '';
 $order_id_berhasil = '';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'konfirmasi_pesanan') {
-    $nama_pemesan = trim($_POST['nama_pelanggan'] ?? '');
-    if ($nama_pemesan === '') {
-        $nama_pemesan = 'Pelanggan Meja ' . $nomor_meja;
-    }
-
     // Buat ID Pesanan Unik (Format: ORD-XXXX)
     $id_pesanan = 'ORD-' . strtoupper(substr(uniqid(), -4));
 
@@ -40,12 +34,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
         // 1. Simpan ke tabel pesanan
         $stmt_pesanan = $pdo->prepare("
-            INSERT INTO pesanan (id_pesanan, waktu_pesan, nama_pelanggan, id_meja, total, status)
+            INSERT INTO pesanan (id_pesanan, waktu_pesan, id_meja, total, status)
             VALUES (:id, NOW(), :nama, :meja, :total, 'menunggu_pembayaran')
         ");
         $stmt_pesanan->execute([
             ':id'    => $id_pesanan,
-            ':nama'  => $nama_pemesan,
             ':meja'  => $nomor_meja,
             ':total' => $total_bayar
         ]);
@@ -78,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         $pdo->rollBack();
         $error_msg = "Gagal memproses pesanan: " . $e->getMessage();
     }
-}
+
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -119,12 +112,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         <!-- Form Konfirmasi Pesanan -->
         <form method="POST" action="" style="display: flex; flex-direction: column; flex: 1;">
             <input type="hidden" name="action" value="konfirmasi_pesanan">
-
-            <!-- Input Nama Pemesan -->
-            <div style="margin-bottom: 14px;">
-                <input type="text" name="nama_pelanggan" placeholder="Nama Anda (Contoh: Budi)" 
-                       style="width: 100%; height: 44px; border: 1.5px solid var(--color-border); border-radius: 12px; padding: 0 14px; font-family: inherit; font-size: 13.5px; outline: none; background: #FFFFFF;" required autocomplete="name">
-            </div>
 
             <!-- Kartu Rincian Pesanan -->
             <div class="summary-card">
