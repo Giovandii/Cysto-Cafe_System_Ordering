@@ -25,12 +25,12 @@ SET nama = EXCLUDED.nama, kategori = EXCLUDED.kategori, harga = EXCLUDED.harga, 
 
 
 -- 3. DATA PESANAN (Tampil di Dashboard Urus Pesanan & Riwayat)
-INSERT INTO pesanan (id_pesanan, waktu_pesan, nama_pelanggan, id_meja, total, status) VALUES
-('ORD-067A', '2026-08-26 14:45:47', 'Budi Santoso', 3, 45000.00, 'selesai'),
-('ORD-067B', '2026-08-26 15:12:03', 'Citra Kirana', 1, 30000.00, 'diproses'),
-('ORD-067C', '2026-08-26 16:15:11', 'Dimas Anggara', 5, 18000.00, 'menunggu_pembayaran'),
-('ORD-055C', '2026-08-26 12:20:15', 'Rian Hidayat', 2, 45000.00, 'selesai'),
-('ORD-053B', '2026-08-26 11:05:00', 'Ahmad Dani', 4, 15000.00, 'batal')
+INSERT INTO pesanan (id_pesanan, waktu_pesan, id_meja, total, status) VALUES
+('ORD-067A', '2026-08-26 14:45:47', 3, 45000.00, 'selesai'),
+('ORD-067B', '2026-08-26 15:12:03', 1, 30000.00, 'diproses'),
+('ORD-067C', '2026-08-26 16:15:11', 5, 18000.00, 'menunggu_pembayaran'),
+('ORD-055C', '2026-08-26 12:20:15', 2, 45000.00, 'selesai'),
+('ORD-053B', '2026-08-26 11:05:00', 4, 15000.00, 'batal')
 ON CONFLICT (id_pesanan) DO NOTHING;
 
 
