@@ -108,7 +108,6 @@ $history_orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <select>
                                 <option value="id" <?= $search_by === 'id' ? 'selected' : '' ?>>ID Pesanan</option>
                                 <option value="meja" <?= $search_by === 'meja' ? 'selected' : '' ?>>Nomor Meja</option>
-                                <option value="nama" <?= $search_by === 'nama' ? 'selected' : '' ?>>Nama Pelanggan</option>
                             </select>
                         </div>
                     </div>
@@ -121,7 +120,7 @@ $history_orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <tr>
                                 <th>ID</th>
                                 <th>Waktu Pesan</th>
-                                <th>Pelanggan / Meja</th>
+                                <th>Meja</th>
                                 <th>Payment</th>
                                 <th>Total</th>
                                 <th>Status</th>
