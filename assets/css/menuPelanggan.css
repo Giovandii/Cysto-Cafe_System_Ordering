@@ -1,4 +1,6 @@
 
+/* TAMPILAN MENU PELANGGAN */
+
         :root {
             --bg-page: #F7F4EE;
             --color-primary: #5C4033;
@@ -282,7 +284,8 @@
             align-items: center;
         }
 
-/* Keranjang Pelanggan */
+
+/* MENU KERANJANG BELANJA PELANGGAN  */
 
         :root {
             --bg-page: #F7F4EE;
@@ -537,3 +540,7 @@
             align-items: center;
             gap: 12px;
         }
+
+/* TAMPILAN RINGKASAN MENU PELANGGAN */
+
+
