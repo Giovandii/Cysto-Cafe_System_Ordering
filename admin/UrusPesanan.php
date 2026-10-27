@@ -19,7 +19,7 @@ $filter_waktu = $_GET['waktu'] ?? 'hari ini';
 
 // 2. Query Mengambil Daftar Pesanan Aktif + Metode Pembayaran (jika ada)
 $sql = "
-    SELECT p.id_pesanan, p.waktu_pesan, p.nama_pelanggan, p.id_meja, p.total, p.status,
+    SELECT p.id_pesanan, p.waktu_pesan, p.id_meja, p.total, p.status,
            COALESCE(t.metode, '-') AS metode, t.id_transaksi
     FROM pesanan p
     LEFT JOIN transaksi t ON p.id_pesanan = t.id_pesanan
@@ -121,9 +121,6 @@ if (!empty($selected_id)) {
                                     } elseif (strtolower($o['status']) === 'diproses') {
                                         $badge_class = 'badge-warning';
                                         $status_label = 'Diproses';
-                                    } elseif (strtolower($o['status']) === 'batal') {
-                                        $badge_class = 'badge-danger';
-                                        $status_label = 'Batal';
                                     }
                                     ?>
                                     <tr style="<?= ($selected_id === $o['id_pesanan']) ? 'background-color: #EDE5DD;' : '' ?>">
@@ -174,9 +171,9 @@ if (!empty($selected_id)) {
                                                     <td><?= $no++ ?></td>
                                                     <td>
                                                         <strong><?= e($item['nama_menu']) ?></strong>
-                                                        <?php if (!empty($item['catatan'])): ?>
+<?php if (!empty($item['catatan'])): ?>
                                                             <br><small style="color: #8C5435;">Catatan: <?= e($item['catatan']) ?></small>
-                                                        <?php endif; ?>
+                                                        <?php endif; ?>  
                                                     </td>
                                                     <td><?= e($item['jumlah']) ?></td>
                                                     <td>Rp<?= number_format($item['harga_satuan'], 0, ',', '.') ?></td>
@@ -211,7 +208,6 @@ if (!empty($selected_id)) {
                                             <option value="menunggu_pembayaran" <?= $selected_order['status'] === 'menunggu_pembayaran' ? 'selected' : '' ?>>Menunggu Pembayaran</option>
                                             <option value="diproses" <?= $selected_order['status'] === 'diproses' ? 'selected' : '' ?>>Diproses (Sedang Dimasak)</option>
                                             <option value="selesai" <?= $selected_order['status'] === 'selesai' ? 'selected' : '' ?>>Selesai (Sudah Lunas)</option>
-                                            <option value="batal" <?= $selected_order['status'] === 'batal' ? 'selected' : '' ?>>Batal</option>
                                         </select>
                                     </div>
 
