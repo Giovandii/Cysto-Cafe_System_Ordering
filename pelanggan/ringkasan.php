@@ -16,16 +16,19 @@ if (empty($_SESSION['keranjang'])) {
 require_once __DIR__ . '/../includes/koneksi.php';
 require_once __DIR__ . '/../includes/helpers.php';
 
-// 3. Hitung Total Tagihan
+// 3. Hitung Total Tagihan & Siapkan Salinan Item
 $total_bayar = 0;
-foreach ($_SESSION['keranjang'] as $item) {
+$daftar_ringkasan = $_SESSION['keranjang'] ?? [];
+foreach ($daftar_ringkasan as $item) {
     $total_bayar += ($item['harga'] * $item['jumlah']);
 }
 
 // 4. Logika Konfirmasi Pesanan (Simpan ke Database PostgreSQL)
 $pesan_sukses = '';
 $order_id_berhasil = '';
+$error_msg = '';
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'konfirmasi_pesanan') {
     // Buat ID Pesanan Unik (Format: ORD-XXXX)
     $id_pesanan = 'ORD-' . strtoupper(substr(uniqid(), -4));
 
@@ -35,7 +38,7 @@ $order_id_berhasil = '';
         // 1. Simpan ke tabel pesanan
         $stmt_pesanan = $pdo->prepare("
             INSERT INTO pesanan (id_pesanan, waktu_pesan, id_meja, total, status)
-            VALUES (:id, NOW(), :nama, :meja, :total, 'menunggu_pembayaran')
+            VALUES (:id, NOW(), :meja, :total, 'menunggu_pembayaran')
         ");
         $stmt_pesanan->execute([
             ':id'    => $id_pesanan,
@@ -57,7 +60,7 @@ $order_id_berhasil = '';
                 ':jumlah'     => $item['jumlah'],
                 ':harga'      => $item['harga'],
                 ':subtotal'   => $subtotal,
-                ':catatan'    => null
+                ':catatan'    => !empty($item['catatan']) ? $item['catatan'] : null
             ]);
         }
 
@@ -71,6 +74,7 @@ $order_id_berhasil = '';
         $pdo->rollBack();
         $error_msg = "Gagal memproses pesanan: " . $e->getMessage();
     }
+}
 
 ?>
 <!DOCTYPE html>
@@ -109,6 +113,12 @@ $order_id_berhasil = '';
 
         <h2 class="page-title">Ringkasan Pesanan</h2>
 
+        <?php if (!empty($error_msg)): ?>
+            <div style="background-color: #F8D7DA; color: #721C24; padding: 12px; border-radius: 10px; margin-bottom: 16px; font-size: 13px;">
+                <?= e($error_msg) ?>
+            </div>
+        <?php endif; ?>
+
         <!-- Form Konfirmasi Pesanan -->
         <form method="POST" action="" style="display: flex; flex-direction: column; flex: 1;">
             <input type="hidden" name="action" value="konfirmasi_pesanan">
@@ -133,11 +143,16 @@ $order_id_berhasil = '';
 
                     <!-- Daftar Item -->
                     <div class="item-list">
-                        <?php if (!empty($_SESSION['keranjang'])): ?>
-                            <?php foreach ($_SESSION['keranjang'] as $item): ?>
+                        <?php if (!empty($daftar_ringkasan)): ?>
+                            <?php foreach ($daftar_ringkasan as $item): ?>
                                 <div class="item-row">
                                     <div class="item-left">
                                         <span class="item-name"><?= e($item['nama']) ?></span>
+                                        <?php if (!empty($item['catatan'])): ?>
+                                            <small style="color: #8C5435; display: block; font-size: 11.5px; font-style: italic; margin-top: 1px;">
+                                                Catatan: <?= e($item['catatan']) ?>
+                                            </small>
+                                        <?php endif; ?>
                                         <span class="item-price">Rp <?= number_format($item['harga'], 0, ',', '.') ?></span>
                                     </div>
                                     <span class="item-qty"><?= $item['jumlah'] ?>x</span>

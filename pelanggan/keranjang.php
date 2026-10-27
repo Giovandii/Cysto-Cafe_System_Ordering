@@ -22,18 +22,18 @@ require_once __DIR__ . '/../includes/helpers.php';
 
 // 3. Logika Tambah / Kurang / Hapus Item di Keranjang
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
-    $id = (int)$_POST['id_menu'];
+    $item_key = trim($_POST['item_key'] ?? '');
 
-    if ($_POST['action'] === 'tambah' && isset($_SESSION['keranjang'][$id])) {
-        $_SESSION['keranjang'][$id]['jumlah'] += 1;
-    } elseif ($_POST['action'] === 'kurang' && isset($_SESSION['keranjang'][$id])) {
-        if ($_SESSION['keranjang'][$id]['jumlah'] > 1) {
-            $_SESSION['keranjang'][$id]['jumlah'] -= 1;
+    if ($_POST['action'] === 'tambah' && isset($_SESSION['keranjang'][$item_key])) {
+        $_SESSION['keranjang'][$item_key]['jumlah'] += 1;
+    } elseif ($_POST['action'] === 'kurang' && isset($_SESSION['keranjang'][$item_key])) {
+        if ($_SESSION['keranjang'][$item_key]['jumlah'] > 1) {
+            $_SESSION['keranjang'][$item_key]['jumlah'] -= 1;
         } else {
-            unset($_SESSION['keranjang'][$id]);
+            unset($_SESSION['keranjang'][$item_key]);
         }
-    } elseif ($_POST['action'] === 'hapus' && isset($_SESSION['keranjang'][$id])) {
-        unset($_SESSION['keranjang'][$id]);
+    } elseif ($_POST['action'] === 'hapus' && isset($_SESSION['keranjang'][$item_key])) {
+        unset($_SESSION['keranjang'][$item_key]);
     }
 
     header('Location: keranjang.php');
@@ -98,7 +98,7 @@ foreach ($_SESSION['keranjang'] as $item) {
                     <a href="Menu.php?meja=<?= e($nomor_meja) ?>" style="color: #5C4033; font-weight: bold; text-decoration: underline;">Pilih menu sekarang</a>
                 </div>
             <?php else: ?>
-                <?php foreach ($_SESSION['keranjang'] as $id => $item): ?>
+                <?php foreach ($_SESSION['keranjang'] as $item_key => $item): ?>
                     <article class="cart-card">
                         <img src="../assets/images/menu/<?= e($item['gambar']) ?>" 
                              onerror="this.onerror=null; this.src='../assets/images/coffee-icon.svg';" 
@@ -107,18 +107,23 @@ foreach ($_SESSION['keranjang'] as $item) {
                         
                         <div class="cart-details">
                             <h3 class="item-name"><?= e($item['nama']) ?></h3>
+                            <?php if (!empty($item['catatan'])): ?>
+                                <div style="font-size: 12px; color: #8C5435; margin: 2px 0 4px 0; font-style: italic; background: #F3ECE5; padding: 2px 8px; border-radius: 6px; width: fit-content;">
+                                    📝 <?= e($item['catatan']) ?>
+                                </div>
+                            <?php endif; ?>
                             <span class="item-price">Rp. <?= number_format($item['harga'], 0, ',', '.') ?></span>
                             
                             <!-- Pengatur Jumlah Porsi (- 1 +) -->
                             <div class="qty-control">
                                 <form method="POST" style="margin:0;">
-                                    <input type="hidden" name="id_menu" value="<?= $id ?>">
+                                    <input type="hidden" name="item_key" value="<?= e($item_key) ?>">
                                     <input type="hidden" name="action" value="kurang">
                                     <button type="submit" class="btn-qty">-</button>
                                 </form>
                                 <span class="qty-val"><?= $item['jumlah'] ?></span>
                                 <form method="POST" style="margin:0;">
-                                    <input type="hidden" name="id_menu" value="<?= $id ?>">
+                                    <input type="hidden" name="item_key" value="<?= e($item_key) ?>">
                                     <input type="hidden" name="action" value="tambah">
                                     <button type="submit" class="btn-qty">+</button>
                                 </form>
@@ -127,7 +132,7 @@ foreach ($_SESSION['keranjang'] as $item) {
 
                         <!-- Tombol Hapus Item -->
                         <form method="POST" style="margin:0;">
-                            <input type="hidden" name="id_menu" value="<?= $id ?>">
+                            <input type="hidden" name="item_key" value="<?= e($item_key) ?>">
                             <input type="hidden" name="action" value="hapus">
                             <button type="submit" class="btn-delete" title="Hapus item">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
