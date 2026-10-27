@@ -19,7 +19,7 @@ $search_by = $_GET['by'] ?? 'id';
 
 // Susun Query Berdasarkan Filter
 $sql = "
-    SELECT p.id_pesanan, p.waktu_pesan, p.nama_pelanggan, p.id_meja, p.total, p.status,
+    SELECT p.id_pesanan, p.waktu_pesan, p.id_meja, p.total, p.status,
            COALESCE(t.metode, '-') AS metode, t.waktu_transaksi
     FROM pesanan p
     LEFT JOIN transaksi t ON p.id_pesanan = t.id_pesanan
@@ -143,7 +143,7 @@ $history_orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <tr>
                 <td class="fw-bold"><?= e($h['id_pesanan']) ?></td>
                 <td><?= date('d-m-Y, H:i:s', strtotime($h['waktu_pesan'])) ?></td>
-                <td><?= e($h['nama_pelanggan']) ?> (Meja <?= e($h['id_meja']) ?>)</td>
+                <td>Meja <?= e($h['id_meja']) ?></td>
                 <td><?= strtoupper(e($h['metode'])) ?></td>
                 <td class="fw-bold">Rp<?= number_format($h['total'], 0, ',', '.') ?></td>
                 <td><span class="badge <?= $badge_class ?>"><?= $label ?></span></td>
