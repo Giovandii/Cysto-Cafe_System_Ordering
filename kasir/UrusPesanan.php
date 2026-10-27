@@ -19,7 +19,7 @@ $filter_waktu = $_GET['waktu'] ?? 'hari ini';
 
 // 2. Query Mengambil Daftar Pesanan Aktif + Metode Pembayaran (jika ada)
 $sql = "
-    SELECT p.id_pesanan, p.waktu_pesan, p.nama_pelanggan, p.id_meja, p.total, p.status,
+    SELECT p.id_pesanan, p.waktu_pesan, p.id_meja, p.total, p.status,
            COALESCE(t.metode, '-') AS metode, t.id_transaksi
     FROM pesanan p
     LEFT JOIN transaksi t ON p.id_pesanan = t.id_pesanan
