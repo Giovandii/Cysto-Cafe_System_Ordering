@@ -543,4 +543,253 @@
 
 /* TAMPILAN RINGKASAN MENU PELANGGAN */
 
+/* ========================================================
+   TAMPILAN RINGKASAN MENU PELANGGAN (Ringkasan.php)
+   ======================================================== */
 
+/* 1. Kartu Ringkasan Utama */
+.summary-card {
+    background-color: #FFFFFF;
+    border: 1.5px solid #ECE3DA;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(92, 64, 51, 0.05);
+    margin-bottom: 20px;
+}
+
+.summary-header {
+    background-color: #FAF7F2;
+    padding: 16px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px dashed var(--color-border);
+}
+
+.header-sub {
+    font-size: 11px;
+    font-weight: 700;
+    color: #8C7D70;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+}
+
+.header-main {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+.pin-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: #FFFFFF;
+    border: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-primary);
+}
+
+/* 2. Isi Kartu & Rincian Item */
+.summary-body {
+    padding: 16px 18px 20px 18px;
+}
+
+.section-label {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #8C7D70;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 14px;
+}
+
+.item-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.item-left {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding-right: 12px;
+}
+
+.item-left .item-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-text-title);
+    line-height: 1.3;
+}
+
+.item-left .item-price {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #6B5547;
+    margin-top: 3px;
+}
+
+.item-qty {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-primary);
+    background-color: #F5EFEB;
+    padding: 3px 8px;
+    border-radius: 6px;
+    align-self: flex-start;
+}
+
+.divider {
+    height: 1px;
+    background-color: #ECE3DA;
+    margin: 16px 0;
+}
+
+/* Baris Total Tagihan */
+.summary-body .total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0;
+}
+
+.total-text {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-text-title);
+}
+
+.total-val {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+/* 3. Section Metode Pembayaran */
+.payment-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-text-title);
+    margin-bottom: 10px;
+}
+
+.payment-card {
+    background-color: #FFFFFF;
+    border: 1.5px solid var(--color-border);
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 12px rgba(92, 64, 51, 0.04);
+}
+
+.pay-info-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-text-title);
+    margin-bottom: 2px;
+}
+
+.pay-info-sub {
+    font-size: 12px;
+    color: #8C7D70;
+}
+
+.pay-arrow {
+    color: var(--color-primary);
+    display: flex;
+    align-items: center;
+}
+
+/* 4. Tombol Konfirmasi Pesanan */
+.btn-confirm {
+    width: 100%;
+    background-color: var(--color-primary);
+    color: #FFFFFF;
+    border: none;
+    border-radius: 16px;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(74, 51, 40, 0.25);
+    transition: background 0.2s, transform 0.1s ease;
+    margin-top: auto;
+}
+
+.btn-confirm:hover {
+    background-color: var(--color-primary-dark);
+}
+
+.btn-confirm:active {
+    transform: scale(0.99);
+}
+
+/* 5. Modal Pop-up Sukses Pesanan */
+.modal-success {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+    backdrop-filter: blur(3px);
+}
+
+.modal-box {
+    background: #FFFFFF;
+    width: 100%;
+    max-width: 350px;
+    border-radius: 20px;
+    padding: 28px 22px;
+    text-align: center;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+    animation: popIn 0.25s ease-out;
+}
+
+@keyframes popIn {
+    from {
+        opacity: 0;
+        transform: scale(0.92);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.order-badge-code {
+    display: inline-block;
+    background-color: #FAF5F0;
+    border: 2px dashed var(--color-primary);
+    color: var(--color-primary);
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    padding: 10px 22px;
+    border-radius: 12px;
+    margin: 16px 0;
+    font-family: monospace;
+}
