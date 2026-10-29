@@ -456,12 +456,51 @@ try {
             font-size: 13.5px;
             outline: none;
             resize: none;
-            margin-bottom: 18px;
+            margin-bottom: 14px;
             background: #FFFFFF;
         }
 
         .note-input:focus {
             border-color: var(--color-primary);
+        }
+
+        /* Checkbox Group Catatan */
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #FFFFFF;
+            border: 1.5px solid var(--color-border);
+            border-radius: 12px;
+            padding: 10px 14px;
+            cursor: pointer;
+            font-size: 13.5px;
+            color: #382519;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .checkbox-label:hover {
+            border-color: var(--color-primary);
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            accent-color: var(--color-primary);
+            width: 17px;
+            height: 17px;
+            cursor: pointer;
+        }
+
+        .checkbox-label.checked {
+            border-color: var(--color-primary);
+            background-color: #F5EFEB;
         }
 
         .btn-modal-add {
@@ -544,7 +583,7 @@ try {
                             </div>
                             <!-- Tombol Plus Buka Modal Catatan -->
                             <button type="button" class="btn-plus" 
-                                    onclick="bukaModalCatatan(<?= $m['id_menu'] ?>, '<?= e($m['nama']) ?>', <?= (int)$m['harga'] ?>, '<?= e($m['gambar'] ?? 'default-menu.png') ?>')" 
+                                    onclick="bukaModalCatatan(<?= $m['id_menu'] ?>, '<?= e(addslashes($m['nama'])) ?>', <?= (int)$m['harga'] ?>, '<?= e($m['gambar'] ?? 'default-menu.png') ?>', '<?= e($m['kategori'] ?? 'food') ?>')" 
                                     title="Tambah ke keranjang">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                     <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -592,8 +631,18 @@ try {
                 </div>
             </div>
 
-            <label style="font-size: 13px; font-weight: 700; color: #382519; display: block; margin-bottom: 6px;">Catatan Khusus (Opsional):</label>
-            <textarea id="modalNote" rows="2" class="note-input" placeholder="Contoh: Pedas, tidak pakai sayur, es sedikit..."></textarea>
+            <label style="font-size: 13px; font-weight: 700; color: #382519; display: block; margin-bottom: 8px;">Pilihan Catatan (Opsional):</label>
+            
+            <!-- Checkbox Dinamis Berdasarkan Kategori -->
+            <div id="modalCheckboxOptions" class="checkbox-group">
+                <!-- Diisi otomatis lewat JS -->
+            </div>
+
+            <!-- Area Input Teks Manual saat "Other" dipilih -->
+            <div id="otherNoteContainer" style="display: none; margin-top: 6px;">
+                <label style="font-size: 12px; font-weight: 600; color: #5C4033; display: block; margin-bottom: 4px;">Catatan Khusus Lainnya:</label>
+                <textarea id="modalNote" rows="2" class="note-input" placeholder="Contoh: Es sedikit, bumbu dipisah, tanpa bawang..."></textarea>
+            </div>
 
             <button type="button" class="btn-modal-add" id="btnKonfirmasiModal" onclick="submitItemDenganCatatan()">
                 + Masukkan ke Keranjang
@@ -605,12 +654,54 @@ try {
     <script>
     let activeItem = null;
 
-    function bukaModalCatatan(id, nama, harga, gambar) {
-        activeItem = { id, nama, harga, gambar };
+    function bukaModalCatatan(id, nama, harga, gambar, kategori) {
+        activeItem = { id, nama, harga, gambar, kategori };
         document.getElementById('modalNama').innerText = nama;
         document.getElementById('modalHarga').innerText = 'Rp. ' + harga.toLocaleString('id-ID');
         document.getElementById('modalImg').src = '../assets/images/menu/' + gambar;
         document.getElementById('modalNote').value = '';
+
+        const container = document.getElementById('modalCheckboxOptions');
+        const otherContainer = document.getElementById('otherNoteContainer');
+        otherContainer.style.display = 'none';
+
+        // Deteksi Kategori: Minuman vs Makanan/Snack
+        const kat = (kategori || '').toLowerCase();
+        const isMinuman = (kat === 'drink' || kat === 'minuman');
+
+        if (isMinuman) {
+            container.innerHTML = `
+                <label class="checkbox-label" onclick="handleCheckboxClick(event, this)">
+                    <input type="checkbox" name="opt_catatan" value="Ice" onchange="handleCheckboxChange(this)">
+                    <span>🧊 Ice (Dingin)</span>
+                </label>
+                <label class="checkbox-label" onclick="handleCheckboxClick(event, this)">
+                    <input type="checkbox" name="opt_catatan" value="No Ice" onchange="handleCheckboxChange(this)">
+                    <span>☕ No Ice (Hangat/Tanpa Es)</span>
+                </label>
+                <label class="checkbox-label" onclick="handleCheckboxClick(event, this)">
+                    <input type="checkbox" name="opt_catatan" value="other" onchange="toggleOtherNote(this)">
+                    <span>✏️ Other (Catatan Manual)</span>
+                </label>
+            `;
+        } else {
+            // Makanan & Snack
+            container.innerHTML = `
+                <label class="checkbox-label" onclick="handleCheckboxClick(event, this)">
+                    <input type="checkbox" name="opt_catatan" value="Pedas" onchange="handleCheckboxChange(this)">
+                    <span>🌶️ Pedas</span>
+                </label>
+                <label class="checkbox-label" onclick="handleCheckboxClick(event, this)">
+                    <input type="checkbox" name="opt_catatan" value="Tidak Pedas" onchange="handleCheckboxChange(this)">
+                    <span>🍃 Tidak Pedas</span>
+                </label>
+                <label class="checkbox-label" onclick="handleCheckboxClick(event, this)">
+                    <input type="checkbox" name="opt_catatan" value="other" onchange="toggleOtherNote(this)">
+                    <span>✏️ Other (Catatan Manual)</span>
+                </label>
+            `;
+        }
+
         document.getElementById('modalCatatan').classList.add('active');
     }
 
@@ -618,17 +709,82 @@ try {
         document.getElementById('modalCatatan').classList.remove('active');
     }
 
+    // Mencegah konflik opsi berlawanan (Pedas vs Tidak Pedas, Ice vs No Ice)
+    function handleCheckboxChange(el) {
+        const parent = el.closest('.checkbox-label');
+        if (el.checked) {
+            parent.classList.add('checked');
+            // Uncheck opsi yang berlawanan
+            const allCheckboxes = document.querySelectorAll('input[name="opt_catatan"]');
+            allCheckboxes.forEach(cb => {
+                if (cb !== el && cb.value !== 'other') {
+                    cb.checked = false;
+                    cb.closest('.checkbox-label').classList.remove('checked');
+                }
+            });
+        } else {
+            parent.classList.remove('checked');
+        }
+    }
+
+    // Toggle tampilan textarea saat opsi Other dipilih
+    function toggleOtherNote(el) {
+        const parent = el.closest('.checkbox-label');
+        const otherContainer = document.getElementById('otherNoteContainer');
+        const modalNote = document.getElementById('modalNote');
+
+        if (el.checked) {
+            parent.classList.add('checked');
+            otherContainer.style.display = 'block';
+            modalNote.focus();
+        } else {
+            parent.classList.remove('checked');
+            otherContainer.style.display = 'none';
+            modalNote.value = '';
+        }
+    }
+
+    // Handler klik label agar konsisten
+    function handleCheckboxClick(e, label) {
+        if (e.target.tagName.toLowerCase() === 'input') return;
+        const cb = label.querySelector('input[type="checkbox"]');
+        cb.checked = !cb.checked;
+        if (cb.value === 'other') {
+            toggleOtherNote(cb);
+        } else {
+            handleCheckboxChange(cb);
+        }
+    }
+
     function submitItemDenganCatatan() {
         if (!activeItem) return;
 
-        const catatan = document.getElementById('modalNote').value;
+        // Ambil semua opsi yang dipilih
+        const selected = [];
+        const checkboxes = document.querySelectorAll('input[name="opt_catatan"]:checked');
+        
+        checkboxes.forEach(cb => {
+            if (cb.value !== 'other') {
+                selected.push(cb.value);
+            }
+        });
+
+        // Ambil catatan manual jika ada
+        const manualNote = document.getElementById('modalNote').value.trim();
+        if (manualNote !== '') {
+            selected.push(manualNote);
+        }
+
+        // Gabungkan catatan (Contoh: "Pedas, tanpa sayur" atau "Ice, gula sedikit")
+        const finalCatatan = selected.join(', ');
+
         const formData = new FormData();
         formData.append('action', 'tambah_keranjang');
         formData.append('id_menu', activeItem.id);
         formData.append('nama', activeItem.nama);
         formData.append('harga', activeItem.harga);
         formData.append('gambar', activeItem.gambar);
-        formData.append('catatan', catatan);
+        formData.append('catatan', finalCatatan);
         formData.append('jumlah', 1);
 
         fetch('', {
