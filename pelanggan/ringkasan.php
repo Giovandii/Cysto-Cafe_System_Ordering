@@ -31,6 +31,7 @@ $error_msg = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'konfirmasi_pesanan') {
     // Buat ID Pesanan Unik (Format: ORD-XXXX)
     $id_pesanan = 'ORD-' . strtoupper(substr(uniqid(), -4));
+    $metode_pembayaran = strtolower($_POST['metode_pembayaran'] ?? 'kasir');
 
     try {
         $pdo->beginTransaction();
@@ -64,11 +65,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             ]);
         }
 
+        // 3. Simpan pilihan metode awal ke tabel transaksi
+        $id_trx = 'TRX-' . strtoupper(substr(uniqid(), -4));
+        $stmt_trx = $pdo->prepare("
+            INSERT INTO transaksi (id_transaksi, id_pesanan, total_bayar, metode, terbayar, kembali)
+            VALUES (:id_trx, :id_pesanan, :total, :metode, 0, 0)
+            ON CONFLICT (id_pesanan) DO UPDATE SET metode = EXCLUDED.metode
+        ");
+        $stmt_trx->execute([
+            ':id_trx'     => $id_trx,
+            ':id_pesanan' => $id_pesanan,
+            ':total'      => $total_bayar,
+            ':metode'     => ($metode_pembayaran === 'qris' ? 'QRIS' : 'Cash')
+        ]);
+
         $pdo->commit();
 
-        // 3. Kosongkan keranjang setelah berhasil disimpan
+        // 4. Kosongkan keranjang setelah berhasil disimpan
         unset($_SESSION['keranjang']);
-        $order_id_berhasil = $id_pesanan;
+
+        // 5. Redirect ke halaman pembayaran sesuai metode
+        header("Location: pembayaran.php?order_id=" . urlencode($id_pesanan) . "&metode=" . urlencode($metode_pembayaran));
+        exit;
 
     } catch (Exception $e) {
         $pdo->rollBack();
@@ -84,6 +102,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ringkasan Pesanan - Cysto</title>
     <link rel="stylesheet" href="../assets/css/menuPelanggan.css">
+    <style>
+        .payment-options-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .pay-option-card {
+            background-color: #FFFFFF;
+            border: 1.5px solid var(--color-border);
+            border-radius: 14px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(92, 64, 51, 0.04);
+            transition: all 0.2s ease;
+        }
+
+        .pay-option-card:hover {
+            border-color: var(--color-primary);
+        }
+
+        .pay-option-card input[type="radio"] {
+            accent-color: var(--color-primary);
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .pay-option-card:has(input[type="radio"]:checked) {
+            border-color: var(--color-primary);
+            background-color: #FAF5F0;
+        }
+
+        .pay-info {
+            flex: 1;
+        }
+
+        .pay-info-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--color-text-title);
+            margin-bottom: 2px;
+        }
+
+        .pay-info-sub {
+            font-size: 12px;
+            color: #8C7D70;
+        }
+    </style>
 </head>
 <body>
 
@@ -172,33 +243,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             </div>
 
             <!-- Section Metode Pembayaran -->
-            <h3 class="payment-title">Metode Pembayaran</h3>
-            <div class="payment-card">
-                <div>
-                    <div class="pay-info-title">Bayar ke Kasir</div>
-                    <div class="pay-info-sub">Pembayaran dilakukan di kasir</div>
-                </div>
-                <div class="pay-arrow">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="9 18 15 12 9 6"></polyline>
-                    </svg>
-                </div>
+            <h3 class="payment-title">Pilih Metode Pembayaran</h3>
+            
+            <div class="payment-options-group">
+                <!-- Opsi 1: Bayar ke Kasir -->
+                <label class="pay-option-card">
+                    <input type="radio" name="metode_pembayaran" value="kasir" checked>
+                    <div class="pay-info">
+                        <div class="pay-info-title">💵 Bayar ke Kasir (Tunai)</div>
+                        <div class="pay-info-sub">Tunjukkan kode pesanan dan bayar langsung di kasir</div>
+                    </div>
+                </label>
+
+                <!-- Opsi 2: QRIS -->
+                <label class="pay-option-card">
+                    <input type="radio" name="metode_pembayaran" value="qris">
+                    <div class="pay-info">
+                        <div class="pay-info-title">📱 QRIS (Instant)</div>
+                        <div class="pay-info-sub">Scan QR via BCA, GoPay, OVO, ShopeePay, Dana, m-Banking</div>
+                    </div>
+                </label>
             </div>
 
             <!-- Tombol Konfirmasi Pesanan -->
-            <a href="konfirmasiPesanan.php" class="btn-submit-order">
-                    <div class="btn-left">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle>
-                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                        </svg>
-                        <span>Lakukan Pembayaran</span>
-                    </div>
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                        <polyline points="12 5 19 12 12 19"></polyline>
+            <button type="submit" class="btn-confirm">
+                <div style="display:flex; align-items:center; gap: 10px;">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
                     </svg>
-                </a>
+                    <span>Lakukan Pembayaran</span>
+                </div>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+            </button>
+        </form>
 
     <!-- Modal Pop-up Sukses -->
     <?php if (!empty($order_id_berhasil)): ?>
