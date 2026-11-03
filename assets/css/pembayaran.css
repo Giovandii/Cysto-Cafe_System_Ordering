@@ -1,0 +1,301 @@
+/**
+ * ==============================================================================
+ * STYLESHEET: PEMBAYARAN & STATUS PESANAN (Cysto Cafe)
+ * Lokasi File: assets/css/pembayaran.css
+ * Diperuntukkan untuk: pelanggan/Pembayaran.php
+ * ==============================================================================
+ */
+
+/* 1. Lencana (Badge) Status Pembayaran */
+.pay-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 14px;
+}
+
+.badge-pending {
+    background-color: #FDF3E7;
+    color: #C07D2B;
+    border: 1px solid #F2DEC4;
+}
+
+.badge-success-pay {
+    background-color: #E8F8F0;
+    color: #1E824C;
+    border: 1px solid #C3E6CB;
+}
+
+/* 2. Kartu Utama Pembayaran & Informasi */
+.pay-card-main {
+    background-color: #FFFFFF;
+    border: 1.5px solid #ECE3DA;
+    border-radius: 20px;
+    padding: 24px 20px;
+    text-align: center;
+    box-shadow: 0 6px 18px rgba(92, 64, 51, 0.05);
+    margin-bottom: 20px;
+    position: relative;
+}
+
+/* 3. Penekanan Teks ID Pesanan (Untuk pembayaran di kasir) */
+.order-id-highlight {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--color-primary);
+    letter-spacing: 2px;
+    font-family: monospace;
+    background: #FAF5F0;
+    border: 2px dashed var(--color-primary);
+    padding: 12px 20px;
+    border-radius: 14px;
+    display: inline-block;
+    margin: 14px 0;
+}
+
+/* 4. Kotak Daftar Petunjuk Langkah Pembayaran */
+.info-step-list {
+    text-align: left;
+    background-color: #FAF7F2;
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-top: 18px;
+    font-size: 13px;
+    color: #5C4033;
+    line-height: 1.6;
+}
+
+.info-step-list ol {
+    padding-left: 18px;
+    margin: 0;
+}
+
+.info-step-list li {
+    margin-bottom: 6px;
+}
+
+.info-step-list li:last-child {
+    margin-bottom: 0;
+}
+
+/* 5. Tampilan Elemen QRIS Dinamis */
+.qris-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.qris-badge-title {
+    font-size: 19px;
+    font-weight: 800;
+    color: #1F1F1F;
+    letter-spacing: 1px;
+}
+
+.qris-box-qr {
+    background: #FFFFFF;
+    border: 2px solid #E5DFD7;
+    border-radius: 16px;
+    padding: 14px;
+    display: inline-block;
+    margin: 10px 0 14px 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    position: relative;
+}
+
+.qris-img {
+    width: 200px;
+    height: 200px;
+    display: block;
+    margin: 0 auto;
+}
+
+.qris-timer {
+    font-size: 12.5px;
+    color: #BA5D4F;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+/* 6. Kotak Konfirmasi & Pengujian QRIS */
+.mock-sandbox-box {
+    background: #F0F6FD;
+    border: 2px dashed #3B82F6;
+    border-radius: 16px;
+    padding: 16px;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.mock-sandbox-title {
+    font-weight: 800;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 6px;
+    color: #1D4ED8;
+    letter-spacing: 0.5px;
+}
+
+.mock-sandbox-desc {
+    font-size: 12px;
+    color: #3B82F6;
+    margin-bottom: 12px;
+    line-height: 1.4;
+}
+
+.btn-simulate-pay {
+    width: 100%;
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    color: #FFFFFF;
+    border: none;
+    padding: 13px;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.btn-simulate-pay:hover {
+    opacity: 0.95;
+    transform: translateY(-1px);
+}
+
+.btn-simulate-pay:disabled {
+    background: #9CA3AF;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* 7. Tampilan Struk / Notifikasi Sukses Lunas */
+.success-icon-wrap {
+    width: 70px;
+    height: 70px;
+    background: #E8F8F0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px auto 16px auto;
+    color: #10B981;
+}
+
+.success-receipt {
+    background-color: #FAF7F2;
+    border: 1px dashed var(--color-border);
+    border-radius: 14px;
+    padding: 16px;
+    margin: 18px 0;
+    text-align: left;
+    font-size: 13px;
+}
+
+.receipt-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    color: #6B5547;
+}
+
+.receipt-row:last-child {
+    margin-bottom: 0;
+    padding-top: 8px;
+    border-top: 1px solid #ECE3DA;
+    font-weight: 700;
+    color: var(--color-primary);
+    font-size: 14px;
+}
+
+/* 8. Pelacak Timeline Status Pesanan */
+.order-timeline {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    margin: 20px 0 10px 0;
+    padding: 0 10px;
+}
+
+.timeline-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 1;
+}
+
+.timeline-dot {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #E5E5E5;
+    color: #7A6252;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.timeline-step.done .timeline-dot {
+    background: #10B981;
+    color: #FFFFFF;
+}
+
+.timeline-step.active .timeline-dot {
+    background: #F59E0B;
+    color: #FFFFFF;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+}
+
+.timeline-label {
+    font-size: 10.5px;
+    color: #7A6252;
+    font-weight: 600;
+}
+
+/* 9. Tombol Navigasi Kembali ke Beranda/Menu */
+.btn-home {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    background-color: var(--color-primary);
+    color: #FFFFFF;
+    text-decoration: none;
+    padding: 14px;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 14.5px;
+    box-shadow: 0 4px 12px rgba(92, 64, 51, 0.2);
+    margin-top: auto;
+}
+
+.btn-home:hover {
+    background-color: var(--color-primary-dark);
+}
+
+/* 10. Animasi Putar Indikator Loading Tombol */
+@keyframes spin {
+    100% { transform: rotate(360deg); }
+}
