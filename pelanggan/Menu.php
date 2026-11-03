@@ -281,6 +281,7 @@ try {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            display: block;
         }
 
         .card-body {
@@ -289,9 +290,10 @@ try {
             justify-content: space-between;
             align-items: flex-end;
             gap: 6px;
+            flex: 1;
         }
 
-        .card-info { flex: 1; }
+        .card-info { flex: 1;}
 
         .card-title {
             font-size: 13px;
@@ -301,10 +303,20 @@ try {
             line-height: 1.25;
         }
 
+        /* Deskripsi Menu */
+        .card-description {
+            font-size: 11px;
+            color: #8C7D70;
+            line-height: 1.3;
+            margin-top: 4px;
+            margin-bottom: 5px;
+        }
+
         .card-price {
             font-size: 12px;
             font-weight: 600;
             color: #6B5547;
+            margin-top: auto;
         }
 
         .btn-plus {
@@ -578,7 +590,20 @@ try {
                         </div>
                         <div class="card-body">
                             <div class="card-info">
-                                <h3 class="card-title"><?= e($m['nama']) ?></h3>
+                                <h3 class="card-title">
+                                    <?= $m['nama'] === 'Ice Chocolate' ? 'Matcha Latte' : e($m['nama']) ?>
+                                </h3>
+
+                                <!-- Deskripsi Menu -->
+                                <p class="card-description">
+                                    <?=  $m['nama'] === 'French Fries' ? 'Kentang goreng renyah dengan saus sambal dan mayonise.':
+                                    ($m['nama'] === 'Nasi Goreng Spesial' ? 'Nasi goreng dengan bumbu khas, telur ceplok, udang, dan kerupuk.' :
+                                    ($m['nama'] === 'Ice Chocolate' ? 'Perpaduan bubuk matcha dengan susu segar yang creamy.' :
+                                    ($m['nama'] === 'Salted Caramel' ? 'Kopi susu dengan rasa caramel manis dan sedikit asin.' :
+                                    ($m['nama'] === 'Potato Wedges' ? 'Potongan kentang panggang berbumbu dengan tekstur renyah.' :
+                                    ($m['nama'] === 'Chicken Nugget' ? 'Nugget ayam gurih dengan tekstur renyah.' :
+                                    'Teh dingin yang menyegarkan.'))))) ?>
+                                </p>
                                 <p class="card-price">Rp. <?= number_format($m['harga'], 0, ',', '.') ?></p>
                             </div>
                             <!-- Tombol Plus Buka Modal Catatan -->
