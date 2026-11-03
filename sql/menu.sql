@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS menu (
     harga DECIMAL(12, 2) NOT NULL,
     stok INT NOT NULL DEFAULT 0,
     gambar VARCHAR(255) DEFAULT 'default-menu.png',
-    deskripsi text default
+    deskripsi text default ''
 );
 
 INSERT INTO menu (id_menu, nama, kategori, harga, stok, gambar) VALUES

@@ -579,6 +579,11 @@ try {
                         <div class="card-body">
                             <div class="card-info">
                                 <h3 class="card-title"><?= e($m['nama']) ?></h3>
+    <!-- Tambahkan deskripsi di bawah judul menu -->
+                                <?php if (!empty($m['deskripsi'])): ?>
+                                <p class="card-desc" style="font-size: 11.5px; color: #8C7D70; margin: 2px 0 4px 0;">
+                                    <?= e($m['deskripsi']) ?></p>
+                                <?php endif; ?>
                                 <p class="card-price">Rp. <?= number_format($m['harga'], 0, ',', '.') ?></p>
                             </div>
                             <!-- Tombol Plus Buka Modal Catatan -->
