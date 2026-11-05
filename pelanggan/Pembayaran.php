@@ -40,9 +40,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $pdo->beginTransaction();
 
             // A.1. Ambil total tagihan pesanan dari database
-            $stmt_cek = $pdo->prepare("SELECT total FROM pesanan WHERE id_pesanan = :id");
-            $stmt_cek->execute([':id' => $order_id]);
-            $total_bayar = $stmt_cek->fetchColumn() ?: 0;
+            // Ambil total tagihan pesanan & nomor meja
+$stmt_cek = $pdo->prepare("SELECT total, id_meja FROM pesanan WHERE id_pesanan = :id");
+$stmt_cek->execute([':id' => $order_id]);
+$row_pesanan = $stmt_cek->fetch(PDO::FETCH_ASSOC);
+
+$total_asli  = (float)($row_pesanan['total'] ?? 0);
+$no_meja     = (int)($row_pesanan['id_meja'] ?? 0);
+$total_bayar = $total_asli + $no_meja; // Tagihan yang dicatat ke transaksi sudah pas dengan kode unik
 
             // A.2. Perbarui status pesanan menjadi 'diproses' (masuk ke antrean dapur)
             $stmt_up = $pdo->prepare("UPDATE pesanan SET status = 'diproses' WHERE id_pesanan = :id");
@@ -160,8 +165,14 @@ try {
 }
 
 // Ekstraksi variabel untuk tampilan
-$nomor_meja     = $order['id_meja'];
-$total_bayar    = (float)$order['total'];
+$nomor_meja     = (int)$order['id_meja'];
+$total_asli     = (float)$order['total'];
+
+// Jika bayar via QRIS, tambahkan kode unik sesuai nomor meja (misal Meja 3 = +Rp 3)
+// Jika bayar tunai di kasir, nominal tetap nominal asli
+$kode_unik      = ($metode === 'qris' || strtolower($order['metode_bayar'] ?? '') === 'qris') ? $nomor_meja : 0;
+$total_bayar    = $total_asli + $kode_unik;
+
 $status_pesanan = strtolower($order['status'] ?? 'menunggu_pembayaran');
 $is_lunas       = ($status_pesanan === 'diproses' || $status_pesanan === 'selesai');
 $is_qris        = ($metode === 'qris' || strtolower($order['metode_bayar']) === 'qris');
@@ -260,6 +271,20 @@ $qris_img_url         = "https://api.qrserver.com/v1/create-qr-code/?size=260x26
                 <!-- Bukti Ringkasan Transaksi -->
                 <div class="success-receipt">
                     <div class="receipt-row">
+    <span>Subtotal Menu:</span>
+    <span>Rp <?= number_format($total_asli, 0, ',', '.') ?></span>
+</div>
+<?php if ($kode_unik > 0): ?>
+<div class="receipt-row" style="color: #2B6CB0; font-size: 12px;">
+    <span>Kode Unik Verifikasi (Meja <?= $nomor_meja ?>):</span>
+    <span>+ Rp <?= number_format($kode_unik, 0, ',', '.') ?></span>
+</div>
+<?php endif; ?>
+<div class="receipt-row">
+    <span>Total Terbayar:</span>
+    <span>Rp <?= number_format($total_bayar, 0, ',', '.') ?></span>
+</div>
+                    <div class="receipt-row">
                         <span>ID Pesanan:</span>
                         <strong><?= e($order_id) ?></strong>
                     </div>
@@ -321,13 +346,28 @@ $qris_img_url         = "https://api.qrserver.com/v1/create-qr-code/?size=260x26
                     Batas Waktu Bayar: <span id="countdown">14:59</span>
                 </div>
 
-                <div style="font-size: 12px; color: #8C7D70; margin-bottom: 3px;">Total Tagihan:</div>
-                <div style="font-size: 22px; font-weight: 800; color: var(--color-primary);">
-                    Rp <?= number_format($total_bayar, 0, ',', '.') ?>
-                </div>
-                <div style="font-size: 12px; color: #8C7D70; margin-top: 4px;">
-                    Kode Pesanan: <strong><?= e($order_id) ?></strong>
-                </div>
+                <!-- Rincian Total Tagihan + Kode Unik Meja -->
+<div style="background: #FAF7F2; border-radius: 12px; padding: 12px 14px; margin: 12px 0; text-align: left; font-size: 13px;">
+    <div style="display: flex; justify-content: space-between; margin-bottom: 6px; color: #7A6252;">
+        <span>Subtotal Pesanan:</span>
+        <span>Rp <?= number_format($total_asli, 0, ',', '.') ?></span>
+    </div>
+    <div style="display: flex; justify-content: space-between; margin-bottom: 6px; color: #2B6CB0; font-size: 12px;">
+        <span>
+            Kode Verifikasi (Meja <?= $nomor_meja ?>):
+            <span style="display:block; font-size: 10.5px; color: #8C7D70;">*Otomatis untuk validasi pesanan</span>
+        </span>
+        <span style="font-weight: bold;">+ Rp <?= number_format($kode_unik, 0, ',', '.') ?></span>
+    </div>
+    <div style="display: flex; justify-content: space-between; padding-top: 8px; border-top: 1px dashed #E5DFD7; font-weight: 800; color: var(--color-primary); font-size: 16px;">
+        <span>Total Bayar:</span>
+        <span>Rp <?= number_format($total_bayar, 0, ',', '.') ?></span>
+    </div>
+</div>
+
+<div style="font-size: 12px; color: #8C7D70; margin-top: 2px;">
+    Kode Pesanan: <strong><?= e($order_id) ?></strong>
+</div>
 
                 <!-- Panduan Cara Bayar untuk Pelanggan -->
                 <div class="info-step-list">
