@@ -146,7 +146,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <!-- Tombol Masuk -->
                 <button type="submit" class="btn-submit">
-                    <span>Masuk Admin</span>
+                    <span>Masuk Kasir</span>
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M5 12h14"></path>
                         <path d="m13 6 6 6-6 6"></path>
