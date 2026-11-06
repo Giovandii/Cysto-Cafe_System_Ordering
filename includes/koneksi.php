@@ -26,10 +26,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
         // 2. Jika status berubah jadi 'selesai', catat/update ke tabel transaksi
         if ($status_baru === 'selesai') {
-            // Cek total bayar dari pesanan
-            $stmt_cek = $pdo->prepare("SELECT total FROM pesanan WHERE id_pesanan = :id");
-            $stmt_cek->execute([':id' => $id_pesanan]);
-            $total_bayar = $stmt_cek->fetchColumn() ?: 0;
+            // Cek total bayar dan nomor meja dari pesanan
+$stmt_cek = $pdo->prepare("SELECT total, id_meja FROM pesanan WHERE id_pesanan = :id");
+$stmt_cek->execute([':id' => $id_pesanan]);
+$row_p = $stmt_cek->fetch(PDO::FETCH_ASSOC);
+
+$total_asli = (float)($row_p['total'] ?? 0);
+$no_meja    = (int)($row_p['id_meja'] ?? 0);
+
+// Jika metode QRIS, tambahkan nomor meja ke total bayar transaksi
+$kode_unik   = (strtoupper($metode_bayar) === 'QRIS') ? $no_meja : 0;
+$total_bayar = $total_asli + $kode_unik;
 
             $id_trx = 'TRX-' . time();
             $stmt_trx = $pdo->prepare("

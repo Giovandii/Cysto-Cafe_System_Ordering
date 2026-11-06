@@ -36,8 +36,16 @@ $order_items = [];
 $selected_order = null;
 
 if (!empty($selected_id)) {
-    // Ambil data induk pesanan
-    $stmt_sel = $pdo->prepare("SELECT * FROM pesanan WHERE id_pesanan = :id");
+    // Ambil data induk pesanan + metode dan total yang sebenarnya dari tabel transaksi jika ada
+    $stmt_sel = $pdo->prepare("
+        SELECT p.*, 
+               COALESCE(t.metode, 'Cash') AS metode_bayar,
+               t.total_bayar AS total_transaksi,
+               t.id_transaksi
+        FROM pesanan p
+        LEFT JOIN transaksi t ON p.id_pesanan = t.id_pesanan
+        WHERE p.id_pesanan = :id
+    ");
     $stmt_sel->execute([':id' => $selected_id]);
     $selected_order = $stmt_sel->fetch(PDO::FETCH_ASSOC);
 
@@ -183,9 +191,34 @@ if (!empty($selected_id)) {
                                         <?php endif; ?>
                                     </tbody>
                                 </table>
-                                <div class="total-bar">
-                                    Total Bayar : Rp<?= number_format($selected_order['total'], 0, ',', '.') ?>
-                                </div>
+                                <?php
+// Hitung apakah pesanan ini via QRIS atau memiliki kode unik meja
+$subtotal_menu = (float)$selected_order['total'];
+$no_meja_kasir = (int)$selected_order['id_meja'];
+$metode_kasir  = strtoupper($selected_order['metode_bayar'] ?? 'CASH');
+
+// Jika sudah ada transaksi tercatat, pakai total_transaksi. Jika belum, hitung kode unik jika QRIS
+if (!empty($selected_order['total_transaksi'])) {
+    $total_final_kasir = (float)$selected_order['total_transaksi'];
+    $kode_unik_kasir   = max(0, $total_final_kasir - $subtotal_menu);
+} else {
+    $kode_unik_kasir   = ($metode_kasir === 'QRIS') ? $no_meja_kasir : 0;
+    $total_final_kasir = $subtotal_menu + $kode_unik_kasir;
+}
+?>
+
+<div class="total-bar" style="text-align: right; line-height: 1.5; font-size: 13.5px;">
+    <div>Subtotal Menu: <strong>Rp<?= number_format($subtotal_menu, 0, ',', '.') ?></strong></div>
+    <?php if ($kode_unik_kasir > 0): ?>
+        <div style="font-size: 12px; color: #2563EB;">
+            + Kode Unik Meja <?= $no_meja_kasir ?>: <strong>+ Rp<?= number_format($kode_unik_kasir, 0, ',', '.') ?></strong>
+        </div>
+    <?php endif; ?>
+    <div style="font-size: 16px; font-weight: 800; color: #5C4033; margin-top: 4px; border-top: 1px dashed #CFC5B8; padding-top: 4px;">
+        Total Tagihan: Rp<?= number_format($total_final_kasir, 0, ',', '.') ?>
+        <span style="font-size: 11px; font-weight: normal; color: #7A6252;">(<?= e($metode_kasir) ?>)</span>
+    </div>
+</div>
                             </div>
 
                             <!-- Sisi Kanan: Panel Update Status Kasir -->
