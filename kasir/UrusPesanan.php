@@ -230,7 +230,8 @@ if (!empty($selected_order['total_transaksi'])) {
                                     <label class="form-label">Tipe Pembayaran</label>
                                     <div class="payment-toggle">
                                         <select name="metode" class="form-control" style="width: 100%; height: 36px; border-radius: 8px; border: 1px solid #CFC5B8; padding: 0 10px; font-family: inherit;">
-                                            <option value="Cash">Cash (Tunai)</option>
+                                            <option value="Cash">Cash</option>
+                                            <option value="Qris">QRIS</option>
                                             <!-- <option value="QRIS">QRIS</option> -->
                                         </select>
                                     </div>
