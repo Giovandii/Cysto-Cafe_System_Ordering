@@ -233,41 +233,43 @@ $qris_img_url         = "https://api.qrserver.com/v1/create-qr-code/?size=260x26
         <!-- KONDISI 1: PESANAN SUDAH LUNAS / SEDANG DIPROSES DAPUR             -->
         <?php if ($is_lunas): ?>
 
-            <div class="pay-card-main">
-                <div class="success-icon-wrap">
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                    </svg>
-                </div>
+            <!-- Judul Dinamis Sesuai Status Terkini -->
+<?php if ($status_pesanan === 'selesai'): ?>
+    <h3 style="font-size: 18px; color: #10B981; margin-bottom: 6px;">
+        Pesanan Sedang Diantar!
+    </h3>
+    <p style="font-size: 13px; color: #7A6252;">
+        Pesanan anda sudah siap dan sedang diantarkan ke Meja <?= e($nomor_meja) ?>. Selamat menikmati!
+    </p>
+<?php else: ?>
+    <h3 style="font-size: 18px; color: var(--color-text-title); margin-bottom: 6px;">
+        Pesanan Sedang Diproses!
+    </h3>
+    <p style="font-size: 13px; color: #7A6252;">
+        Pembayaran telah diterima oleh sistem. Dapur dan barista sedang menyiapkan pesanan mejamu.
+    </p>
+<?php endif; ?>
 
-                <span class="pay-status-badge badge-success-pay">
-                    Pembayaran Berhasil!
-                </span>
+<!-- Status Timeline Tracker Dinamis -->
+<div class="order-timeline">
+    <!-- Step 1: Terbayar (Pasti Done karena sudah masuk kondisi is_lunas) -->
+    <div class="timeline-step done">
+        <div class="timeline-dot">✓</div>
+        <span class="timeline-label">Terbayar</span>
+    </div>
 
-                <h3 style="font-size: 18px; color: var(--color-text-title); margin-bottom: 6px;">
-                    Pesanan Sedang Diproses!
-                </h3>
-                <p style="font-size: 13px; color: #7A6252;">
-                    Pembayaran telah diterima oleh sistem. Dapur dan barista sedang menyiapkan pesanan mejamu.
-                </p>
+    <!-- Step 2: Diproses (Done jika sudah selesai, Active jika sedang diproses) -->
+    <div class="timeline-step <?= $status_pesanan === 'selesai' ? 'done' : 'active' ?>">
+        <div class="timeline-dot"><?= $status_pesanan === 'selesai' ? '✓' : '⏱' ?></div>
+        <span class="timeline-label">Diproses</span>
+    </div>
 
-                <!-- Status Timeline Tracker -->
-                <div class="order-timeline">
-                    <div class="timeline-step done">
-                        <div class="timeline-dot"></div>
-                        <span class="timeline-label">Terbayar</span>
-                    </div>
-                    <div class="timeline-step active">
-                        <div class="timeline-dot">⏱</div>
-                        <span class="timeline-label">Diproses</span>
-                    </div>
-                    <div class="timeline-step">
-                        <div class="timeline-dot">3</div>
-                        <span class="timeline-label">Diantar</span>
-                    </div>
-                </div>
-
+    <!-- Step 3: Diantar / Selesai (Done jika status pesanan adalah 'selesai') -->
+    <div class="timeline-step <?= $status_pesanan === 'selesai' ? 'done' : '' ?>">
+        <div class="timeline-dot"><?= $status_pesanan === 'selesai' ? '✓' : '3' ?></div>
+        <span class="timeline-label">Diantar</span>
+    </div>
+</div>
                 <!-- Bukti Ringkasan Transaksi -->
                 <div class="success-receipt">
                     <div class="receipt-row">
@@ -448,30 +450,40 @@ $qris_img_url         = "https://api.qrserver.com/v1/create-qr-code/?size=260x26
 
     </div>
 
-    <!-- JAVASCRIPT: TIMER HITUNG MUNDUR, AJAX SIMULASI, & POLLING REALTIME      -->
+        <!-- ====================================================================== -->
+    <!-- JAVASCRIPT: TIMER HITUNG MUNDUR, AJAX SIMULASI, & POLLING UNIVERSAL    -->
+    <!-- ====================================================================== -->
     <script>
-    const orderId = "<?= e($order_id) ?>";
-    const isLunas = <?= $is_lunas ? 'true' : 'false' ?>;
+    const orderId       = "<?= e($order_id) ?>";
+    const currentStatus = "<?= e($status_pesanan) ?>"; // Menyimpan status halaman saat ini
 
+    // -------------------------------------------------------------------------
+    // 1. COUNTDOWN TIMER KHUSUS QRIS (Hanya aktif jika metode QRIS & belum lunas)
+    // -------------------------------------------------------------------------
     <?php if ($is_qris && !$is_lunas): ?>
-    // 1. COUNTDOWN TIMER PEMBAYARAN QRIS (15 MENIT)
     let timeLeft = 15 * 60; // 15 menit dalam detik
     const timerDisplay = document.getElementById('countdown');
-    const timerInterval = setInterval(() => {
-        if (timeLeft <= 0) {
-            clearInterval(timerInterval);
-            timerDisplay.innerText = "Kadaluarsa";
-            return;
-        }
-        timeLeft--;
-        const minutes = Math.floor(timeLeft / 60);
-        const seconds = timeLeft % 60;
-        timerDisplay.innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-    }, 1000);
+    if (timerDisplay) {
+        const timerInterval = setInterval(() => {
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                timerDisplay.innerText = "Kadaluarsa";
+                return;
+            }
+            timeLeft--;
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerDisplay.innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        }, 1000);
+    }
 
-    // 2. FUNGSI KONFIRMASI BAYAR (AJAX POST)
+    // -------------------------------------------------------------------------
+    // 2. FUNGSI KONFIRMASI BAYAR QRIS (AJAX POST)
+    // -------------------------------------------------------------------------
     function jalankanSimulasiBayar() {
         const btn = document.getElementById('btnSimulatePay');
+        if (!btn) return;
+
         btn.disabled = true;
         btn.innerHTML = `
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="animation: spin 1s linear infinite;">
@@ -494,12 +506,11 @@ $qris_img_url         = "https://api.qrserver.com/v1/create-qr-code/?size=260x26
         .then(res => res.json())
         .then(data => {
             if (data.status === 'success') {
-                // Refresh halaman untuk menampilkan tampilan Lunas
                 setTimeout(() => {
                     window.location.reload();
                 }, 600);
             } else {
-                alert("Simulasi gagal: " + (data.message || 'Terjadi kesalahan'));
+                alert("Gagal: " + (data.message || 'Terjadi kesalahan'));
                 btn.disabled = false;
                 btn.innerHTML = "Saya Sudah Bayar / Konfirmasi Lunas";
             }
@@ -510,13 +521,15 @@ $qris_img_url         = "https://api.qrserver.com/v1/create-qr-code/?size=260x26
             btn.innerHTML = "Saya Sudah Bayar / Konfirmasi Lunas";
         });
     }
+    <?php endif; ?>
 
-    // 3. POLLING STATUS SECARA REALTIME (SETIAP 3 DETIK)
-    // Memeriksa jika kasir mengonfirmasi pesanan dari dashboard kasir
-    // atau webhook otomatis mengubah status pesanan menjadi 'diproses'
+    // -------------------------------------------------------------------------
+    // 3. POLLING REALTIME UNIVERSAL (Berjalan untuk QRIS maupun Kasir Tunai)
+    // -------------------------------------------------------------------------
+    // Polling ini berjalan setiap 3 detik.
+    // Jika kasir mengubah status di database (misal: dari menunggu -> diproses -> selesai),
+    // sistem akan mendeteksi perbedaan status dan langsung me-reload layar pelanggan!
     setInterval(() => {
-        if (isLunas) return;
-
         const formData = new FormData();
         formData.append('action', 'cek_status');
         formData.append('order_id', orderId);
@@ -527,13 +540,13 @@ $qris_img_url         = "https://api.qrserver.com/v1/create-qr-code/?size=260x26
         })
         .then(res => res.json())
         .then(data => {
-            if (data.status === 'diproses' || data.status === 'selesai') {
+            if (data.status && data.status !== currentStatus) {
+                // Status di database berbeda dengan tampilan layar saat ini -> Refresh!
                 window.location.reload();
             }
         })
         .catch(() => {});
     }, 3000);
-    <?php endif; ?>
     </script>
 
 </body>
