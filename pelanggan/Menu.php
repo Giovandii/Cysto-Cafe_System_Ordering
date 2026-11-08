@@ -300,6 +300,12 @@ try {
             margin-bottom: 4px;
             line-height: 1.25;
         }
+        .card-desc {
+            font-size: 11.5px;
+            color: #8C7D70;
+            margin: 2px 0 4px 0;
+            line-height: 1.4;
+        }
 
         .card-price {
             font-size: 12px;
@@ -580,10 +586,21 @@ try {
                             <div class="card-info">
                                 <h3 class="card-title"><?= e($m['nama']) ?></h3>
     <!-- Tambahkan deskripsi di bawah judul menu -->
-                                <?php if (!empty($m['deskripsi'])): ?>
-                                <p class="card-desc" style="font-size: 11.5px; color: #8C7D70; margin: 2px 0 4px 0;">
-                                    <?= e($m['deskripsi']) ?></p>
-                                <?php endif; ?>
+                                <?php
+                                    $daftar_deskripsi = [
+                                        'Nasi Goreng Spesial' => 'Nasi goreng dengan bumbu khas, telur ceplok, udang, dan kerupuk.',
+                                        'Salted Caramel' => 'Minuman Kopi susu dengan rasa caramel manis dan sedikit asin.',
+                                        'Potato Wedges' => 'Potongan kentang berbentuk wedges dengan tekstur renyah di luar dan lembut di dalam.',
+                                        'Chicken Nugget' => 'Nugget ayam dengan tekstur renyah disajikan bersama saus sambal.',
+                                        'French Fries' => 'Kentang goreng renyah dengan saus sambal dan mayones.',
+                                        'Tea' => 'Minuman teh yang segar dan nikmat.',
+                                        'Chocolate' => 'Minuman cokelat dengan rasa manis dan creamy.'
+                                    ];
+
+                                    $nama_menu = $m['nama'];
+                                    $deskripsi = $daftar_deskripsi[$nama_menu] ?? 'Deskripsi menu belum tersedia.';
+                                ?>
+                                <p class="card-desc"><?= e($deskripsi) ?></p>
                                 <p class="card-price">Rp. <?= number_format($m['harga'], 0, ',', '.') ?></p>
                             </div>
                             <!-- Tombol Plus Buka Modal Catatan -->
