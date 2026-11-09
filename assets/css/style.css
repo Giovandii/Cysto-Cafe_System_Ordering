@@ -14,6 +14,8 @@
     --color-border: #CFC5B8;
     --color-input-border: #B5A599;
     --font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+    /* Tambahkan variabel font baru */
+    --font-main: 'Inter', 'Poppins', -apple-system, sans-serif;
 }
 
 * {
@@ -29,6 +31,8 @@ body {
     justify-content: center;
     align-items: center;
     font-family: var(--font-serif);
+    /* Ubah font utama */
+    font-family: var(--font-main);
 }
 
 /* Container Frame Ponsel */
@@ -76,6 +80,8 @@ body {
     letter-spacing: 0.5px;
     margin-bottom: 8px;
     text-align: center;
+    /* Tambahkan baris ini */
+    font-family: var(--font-serif);
 }
 
 .main-subtitle {
@@ -146,7 +152,8 @@ body {
     border-radius: 14px;
     background-color: transparent;
     padding: 0 16px 0 48px;
-    font-family: var(--font-serif);
+    /* font-family: var(--font-serif); */
+    font-family: var(--font-main);
     font-size: 14px;
     color: var(--color-card-title);
     outline: none;
@@ -155,7 +162,7 @@ body {
 
 .form-input::placeholder {
     color: var(--color-card-sub);
-    font-family: var(--font-serif);
+    font-family: var(--font-main);
 }
 
 .form-input:focus {

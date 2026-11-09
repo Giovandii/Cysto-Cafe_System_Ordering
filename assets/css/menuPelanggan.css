@@ -8,6 +8,7 @@
             --color-text-title: #382519;
             --color-border: #C8B8A6;
             --font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+            --font-main: 'Inter', 'Poppins', -apple-system, sans-serif;
         }
 
         * {
@@ -23,6 +24,8 @@
             justify-content: center;
             align-items: flex-start;
             font-family: var(--font-serif);
+            /* Ubah font utama menjadi Sans-serif */
+            font-family: var(--font-main);
         }
 
         /* Container Tampilan Ponsel */
@@ -61,6 +64,8 @@
             font-weight: 700;
             color: var(--color-primary);
             letter-spacing: 0.5px;
+            /* Tambahkan baris ini */
+            font-family: var(--font-serif);
         }
 
         .table-pill {

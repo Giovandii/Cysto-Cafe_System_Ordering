@@ -5,6 +5,7 @@
     --brown-hover: #4B3224;
     --btn-cream: #F8F5EE;
     --font-serif: 'Playfair Display', Georgia, serif;
+    --font-main: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 * {
@@ -15,7 +16,7 @@
 
 body.dashboard-body {
     background-color: var(--bg-dashboard);
-    font-family: var(--font-serif);
+    font-family: var(--font-main);
     min-height: 100vh;
 }
 
@@ -112,6 +113,8 @@ body.dashboard-body {
     font-size: 26px;
     color: #382519;
     font-weight: 800;
+    /* font-family: 'Playfair Display', Georgia, serif; */
+    font-family: var(--font-serif);
 }
 
 .page-subtitle {
