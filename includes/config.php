@@ -20,7 +20,7 @@ return [
     'db_port' => getenv('DB_PORT') ?: '5432',
     'db_name' => getenv('DB_NAME') ?: 'pbl_cafe',
     'db_user' => getenv('DB_USER') ?: 'postgres',
-    'db_pass' => getenv('DB_PASS') ?: 'Kurapostgres',
+    'db_pass' => getenv('DB_PASS') ?: '12345678',
 
     // -------------------------------------------------------------------------
     // 2. KREDENSIAL BOT TELEGRAM (NOTIFIKASI KASIR / DAPUR)
