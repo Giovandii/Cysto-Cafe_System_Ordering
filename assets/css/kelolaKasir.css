@@ -1,0 +1,573 @@
+/* =========================================================
+   KELOLA KASIR - Cysto Cafe
+   Token warna, ukuran, dan radius mengikuti frame
+   "KelolaKasir" pada Figma (file UI UX PBL, node 104:142).
+   Dipakai langsung oleh admin/kelola_kasir.php
+   ========================================================= */
+
+:root {
+    --kk-bg: #F7F3EC;
+    --kk-surface: #F5EFE6;
+    --kk-brown: #6B4A35;
+    --kk-brown-deep: #463022;
+    --kk-brown-soft: #7D553C;
+    --kk-brown-label: rgba(107, 74, 53, 0.55);
+    --kk-brown-label-2: rgba(107, 74, 53, 0.63);
+    --kk-red: #C85A54;
+    --kk-white: #FFFFFF;
+    --kk-cream: rgba(247, 243, 236, 0.92);
+    --kk-input: rgba(255, 255, 255, 0.77);
+    --kk-placeholder: rgba(0, 0, 0, 0.7);
+    --kk-border: rgba(107, 74, 53, 0.3);
+    --kk-font: 'Inria Serif', Georgia, 'Times New Roman', serif;
+    --kk-radius: 10px;
+    --kk-shadow-body: 0 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body.kelola-kasir-body {
+    background-color: var(--kk-bg);
+    color: var(--kk-brown);
+    font-family: var(--kk-font);
+    min-height: 100vh;
+    margin: 0;
+}
+
+/* ================= KONTEN ================= */
+.kk-content {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.kk-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.kk-title {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--kk-brown);
+    margin: 0;
+}
+
+.kk-subtitle {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--kk-brown);
+    margin: 4px 0 0;
+}
+
+.kk-add-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 42px;
+    padding: 0 20px;
+    border: 1px solid var(--kk-brown);
+    border-radius: var(--kk-radius);
+    background: var(--kk-brown);
+    color: var(--kk-cream);
+    font-family: var(--kk-font);
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.15s ease;
+}
+
+.kk-add-btn:hover {
+    background: var(--kk-brown-deep);
+}
+
+/* ================= NOTIFIKASI ================= */
+.kk-notif {
+    padding: 12px 18px;
+    border-radius: var(--kk-radius);
+    font-size: 15px;
+    font-weight: 700;
+    border: 1px solid transparent;
+}
+
+.kk-notif.ok {
+    background: #E4EFE0;
+    border-color: #A9C6A0;
+    color: #3F6338;
+}
+
+.kk-notif.err {
+    background: #F7E3E1;
+    border-color: var(--kk-red);
+    color: #9C3F3A;
+}
+
+/* ================= SEARCH BOX ================= */
+.kk-search {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    align-self: flex-start;
+    padding: 7px 14px;
+    background: var(--kk-bg);
+    border: 1px solid var(--kk-border);
+    border-radius: var(--kk-radius);
+    color: var(--kk-brown);
+}
+
+.kk-search-icon {
+    display: flex;
+    flex: 0 0 auto;
+}
+
+.kk-search-label {
+    font-size: 16px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.kk-select {
+    height: 32px;
+    padding: 0 8px;
+    border: 1px solid var(--kk-border);
+    border-radius: 6px;
+    background: rgba(251, 251, 251, 0.76);
+    color: var(--kk-brown);
+    font-family: var(--kk-font);
+    font-size: 14px;
+    font-weight: 400;
+    cursor: pointer;
+    outline: none;
+}
+
+.kk-select:focus {
+    border-color: var(--kk-brown);
+}
+
+.kk-search-bar {
+    width: 170px;
+    height: 32px;
+    padding: 0 10px;
+    border: 0.5px solid var(--kk-border);
+    border-radius: 6px;
+    background: rgba(251, 251, 251, 0.76);
+    color: var(--kk-brown);
+    font-family: var(--kk-font);
+    font-size: 14px;
+    outline: none;
+}
+
+.kk-search-bar::placeholder {
+    color: var(--kk-placeholder);
+}
+
+.kk-search-bar:focus {
+    border-color: var(--kk-brown);
+}
+
+.kk-search-btn {
+    height: 32px;
+    padding: 0 14px;
+    border: 0.5px solid var(--kk-border);
+    border-radius: 6px;
+    background: rgba(107, 74, 53, 0.74);
+    color: var(--kk-cream);
+    font-family: var(--kk-font);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* ================= TABEL ================= */
+.kk-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: var(--kk-bg);
+    border-radius: 0 0 var(--kk-radius) var(--kk-radius);
+    box-shadow: var(--kk-shadow-body);
+}
+
+.kk-table thead {
+    background: var(--kk-brown);
+    color: var(--kk-white);
+}
+
+.kk-table thead th:first-child {
+    border-radius: var(--kk-radius) 0 0 0;
+}
+
+.kk-table thead th:last-child {
+    border-radius: 0 var(--kk-radius) 0 0;
+}
+
+.kk-table th {
+    padding: 16px 26px;
+    text-align: left;
+    font-size: 23px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.kk-table tbody tr {
+    border-bottom: 1px solid var(--kk-brown);
+}
+
+.kk-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.kk-table td {
+    padding: 16px 26px;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--kk-brown);
+    vertical-align: middle;
+    border-bottom: 1px solid var(--kk-brown);
+    background: var(--kk-bg);
+}
+
+.kk-table tbody tr:last-child td:first-child {
+    border-radius: 0 0 0 var(--kk-radius);
+}
+
+.kk-table tbody tr:last-child td:last-child {
+    border-radius: 0 0 var(--kk-radius) 0;
+}
+
+.kk-col-user {
+    width: 34%;
+}
+
+.kk-col-role {
+    width: 24%;
+}
+
+.kk-col-act {
+    width: 42%;
+}
+
+/* Badge role */
+.kk-badge {
+    display: inline-block;
+    padding: 5px 16px;
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 700;
+    background: rgba(107, 74, 53, 0.12);
+    color: var(--kk-brown);
+    border: 1px solid rgba(107, 74, 53, 0.28);
+}
+
+.kk-badge.role-admin {
+    background: rgba(107, 74, 53, 0.9);
+    border-color: var(--kk-brown);
+    color: var(--kk-bg);
+}
+
+.kk-badge.role-owner {
+    background: rgba(200, 90, 84, 0.16);
+    border-color: rgba(200, 90, 84, 0.5);
+    color: #9C3F3A;
+}
+
+.kk-empty {
+    padding: 34px 26px !important;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 400;
+    color: rgba(107, 74, 53, 0.7);
+}
+
+.kk-count {
+    margin: 12px 0 0;
+    font-size: 14px;
+    color: rgba(107, 74, 53, 0.8);
+}
+
+/* ================= TOMBOL AKSI TABEL ================= */
+.kk-act {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.kk-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 93px;
+    height: 33px;
+    border-radius: var(--kk-radius);
+    background: var(--kk-bg);
+    font-family: var(--kk-font);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.kk-btn svg {
+    display: block;
+    flex: 0 0 auto;
+}
+
+.kk-btn-edit {
+    border: 1px solid var(--kk-brown);
+    color: var(--kk-brown);
+}
+
+.kk-btn-edit:hover {
+    background: var(--kk-brown);
+    color: var(--kk-bg);
+}
+
+.kk-btn-del {
+    border: 1px solid var(--kk-red);
+    color: var(--kk-red);
+}
+
+.kk-btn-del:hover {
+    background: var(--kk-red);
+    color: var(--kk-bg);
+}
+
+.kk-btn-txt {
+    border: 0;
+    background: transparent;
+    color: var(--kk-brown);
+    font-family: var(--kk-font);
+    font-size: 14px;
+    font-weight: 700;
+    padding: 4px 2px;
+    cursor: pointer;
+}
+
+.kk-btn-txt:hover {
+    text-decoration: underline;
+}
+
+/* ================= OVERLAY & POPUP ================= */
+.kk-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(70, 48, 34, 0.45);
+}
+
+.kk-overlay.open {
+    display: flex;
+}
+
+.kk-popup {
+    width: 500px;
+    max-width: 100%;
+    max-height: calc(100vh - 48px);
+    overflow-y: auto;
+    background: var(--kk-surface);
+    border: 1px solid var(--kk-brown-label-2);
+    border-radius: var(--kk-radius);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
+}
+
+.kk-popup-head {
+    background: var(--kk-brown);
+    color: var(--kk-white);
+    border-radius: var(--kk-radius) var(--kk-radius) 0 0;
+    padding: 18px 37px;
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.kk-form {
+    padding: 24px 29px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.kk-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.kk-field + .kk-field {
+    margin-top: 14px;
+}
+
+.kk-label {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--kk-brown);
+}
+
+.kk-select-full {
+    width: 100%;
+    height: 50px;
+    padding: 0 14px;
+    border: 1px solid var(--kk-brown-label-2);
+    border-radius: 7px;
+    background: var(--kk-input);
+    color: var(--kk-brown);
+    font-family: var(--kk-font);
+    font-size: 16px;
+    font-weight: 400;
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%236B4A35' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+}
+
+.kk-select-full:focus {
+    border-color: var(--kk-brown);
+    background-color: var(--kk-white);
+}
+
+.kk-input {
+    width: 100%;
+    height: 50px;
+    padding: 0 14px;
+    border: 1px solid var(--kk-brown-label-2);
+    border-radius: 7px;
+    background: var(--kk-input);
+    color: var(--kk-brown);
+    font-family: var(--kk-font);
+    font-size: 16px;
+    font-weight: 400;
+    outline: none;
+}
+
+.kk-input:focus {
+    border-color: var(--kk-brown);
+    background: var(--kk-white);
+}
+
+.kk-input[readonly] {
+    color: rgba(107, 74, 53, 0.75);
+    cursor: default;
+}
+
+.kk-hint {
+    font-size: 13px;
+    color: rgba(107, 74, 53, 0.75);
+    margin: 0;
+}
+
+.kk-form-foot {
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+    margin-top: 22px;
+}
+
+.kk-btn-save,
+.kk-btn-cancel {
+    height: 37px;
+    padding: 0 18px;
+    border-radius: 7px;
+    font-family: var(--kk-font);
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.kk-btn-cancel {
+    background: rgba(227, 199, 139, 0.62);
+    border: 1px solid var(--kk-brown-label-2);
+    color: var(--kk-brown-label);
+}
+
+.kk-btn-save {
+    background: rgba(107, 74, 53, 0.74);
+    border: 1px solid rgba(107, 74, 53, 0.74);
+    color: var(--kk-cream);
+}
+
+.kk-btn-save:hover {
+    background: var(--kk-brown);
+}
+
+.kk-btn-cancel:hover {
+    background: rgba(227, 199, 139, 0.85);
+}
+
+/* ================= POPUP KONFIRMASI HAPUS ================= */
+.kk-popup-sm {
+    width: 400px;
+}
+
+.kk-popup-sm .kk-form {
+    gap: 10px;
+}
+
+.kk-warn {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--kk-brown);
+}
+
+.kk-warn strong {
+    font-weight: 700;
+}
+
+/* ================= RESPONSIF ================= */
+@media (max-width: 900px) {
+    .kk-table th {
+        font-size: 19px;
+        padding: 14px 18px;
+    }
+
+    .kk-table td {
+        font-size: 17px;
+        padding: 14px 18px;
+    }
+
+    .kk-title {
+        font-size: 26px;
+    }
+
+    .kk-search {
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 560px) {
+    .kk-search-bar {
+        width: 100%;
+    }
+
+    .kk-act {
+        gap: 10px;
+    }
+
+    .kk-btn {
+        width: 78px;
+    }
+
+    .kk-form,
+    .kk-popup-head {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+}
