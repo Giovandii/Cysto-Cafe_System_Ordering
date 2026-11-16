@@ -393,6 +393,7 @@ if ($is_qris && !$is_lunas) {
     <!-- JAVASCRIPT: POLLING & SIMULATOR                                        -->
     <!-- ====================================================================== -->
     <script>
+    const noMeja = "<?= e($nomor_meja) ?>";
     const orderId         = "<?= e($order_id) ?>";
     const currentStatus   = "<?= e($status_pesanan) ?>";
     const midtransOrderId = "<?= e($qris_data['midtrans_order_id'] ?? '') ?>";
@@ -401,11 +402,9 @@ if ($is_qris && !$is_lunas) {
     function jalankanSimulasiBayar() {
         const btn = document.getElementById('btnSimulatePay');
         if (btn) btn.disabled = true;
-
         const formData = new FormData();
         formData.append('action', 'simulasi_bayar_sukses');
         formData.append('order_id', orderId);
-
         fetch('', {
             method: 'POST',
             body: formData
@@ -413,9 +412,10 @@ if ($is_qris && !$is_lunas) {
         .then(res => res.json())
         .then(data => {
             if (data.status === 'success') {
-                setTimeout(() => {
-                    window.location.reload();
-                }, 500);
+                // Munculkan notifikasi pop-up pembayaran berhasil
+                alert("Pembayaran Berhasil! Pesananmu sedang disiapkan dapur.");
+                // Langsung redirect kembali ke halaman menu
+                window.location.href = "Menu.php?meja=" + encodeURIComponent(noMeja);
             } else {
                 alert("Gagal: " + (data.message || 'Terjadi kesalahan'));
                 if (btn) btn.disabled = false;
@@ -435,15 +435,16 @@ if ($is_qris && !$is_lunas) {
         if (midtransOrderId) {
             formData.append('midtrans_order_id', midtransOrderId);
         }
-
         fetch('', {
             method: 'POST',
             body: formData
         })
         .then(res => res.json())
         .then(data => {
-            if (data.status && data.status !== currentStatus) {
-                window.location.reload();
+            if (data.status === 'diproses' || (data.status && data.status !== currentStatus)) {
+                // Notifikasi berhasil dan redirect ke menu
+                alert("✓ Pembayaran Berhasil! Pesananmu sedang disiapkan dapur.");
+                window.location.href = "Menu.php?meja=" + encodeURIComponent(noMeja);
             }
         })
         .catch(() => {});
