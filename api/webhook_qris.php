@@ -85,15 +85,15 @@ try {
 
         $notif = "⚡ <b>PEMBAYARAN QRIS OTOMATIS TERDETEKSI!</b> ⚡\n";
         $notif .= "━━━━━━━━━━━━━━━━━━━━\n";
-        $notif .= "📦 <b>ID Pesanan</b> : <code>{$order_id}</code>\n";
-        $notif .= "🧾 <b>ID Transaksi</b>: <code>{$id_trx}</code>\n";
-        $notif .= "🪑 <b>Lokasi</b>     : Meja {$no_meja}\n";
-        $notif .= "💰 <b>Nominal</b>    : <b>{$total_fmt}</b>\n";
-        $notif .= "⏰ <b>Waktu</b>      : {$jam}\n";
+        $notif .= "<b>ID Pesanan</b> : <code>{$order_id}</code>\n";
+        $notif .= "<b>ID Transaksi</b>: <code>{$id_trx}</code>\n";
+        $notif .= "<b>Lokasi</b>     : Meja {$no_meja}\n";
+        $notif .= "<b>Nominal</b>    : <b>{$total_fmt}</b>\n";
+        $notif .= "<b>Waktu</b>      : {$jam}\n";
         $notif .= "━━━━━━━━━━━━━━━━━━━━\n";
-        $notif .= "📋 <b>Menu:</b>\n{$daftar_menu}";
+        $notif .= "<b>Menu:</b>\n{$daftar_menu}";
         $notif .= "━━━━━━━━━━━━━━━━━━━━\n";
-        $notif .= "🍳 <i>Sistem kasir otomatis melunasi pesanan. Dapur mulai memasak!</i>";
+        $notif .= "<i>Sistem kasir otomatis melunasi pesanan. Dapur mulai memasak!</i>";
 
         kirim_notifikasi_telegram($notif);
 
@@ -107,7 +107,7 @@ try {
     } else {
         // Jika ada uang masuk tapi tidak ada pesanan dengan nominal persis
         $total_fmt = "Rp " . number_format($nominal_clean, 0, ',', '.');
-        $notif_unmatch = "⚠️ <b>DANA QRIS MASUK (TIDAK DITEMUKAN PESANAN COCOK)</b> ⚠️\n";
+        $notif_unmatch = "<b>DANA QRIS MASUK (TIDAK DITEMUKAN PESANAN COCOK)</b> ⚠️\n";
         $notif_unmatch .= "Nominal: {$total_fmt}\n";
         if (!empty($keterangan)) {
             $notif_unmatch .= "Keterangan: " . htmlspecialchars($keterangan) . "\n";
