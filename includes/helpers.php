@@ -1,22 +1,21 @@
 <?php
 /**
- * ==============================================================================
  * MODUL PUSTAKA BANTUAN (HELPERS) & FUNGSI UTILITAS
  * Lokasi File: includes/helpers.php
  * Proyek     : Sistem Informasi Kafe (Cysto Cafe) - PBL
- * ==============================================================================
+ 
  * Berisi sekumpulan fungsi pembantu global yang digunakan di seluruh aplikasi:
  * 1. Sanitasi teks input/output untuk mencegah serangan XSS.
  * 2. Perhitungan checksum CRC16 standar EMVCo QRIS nasional.
  * 3. Konversi payload QRIS statis menjadi dinamis (nominal tagihan otomatis).
  * 4. Pengiriman pesan notifikasi otomatis via API Bot Telegram.
- * ==============================================================================
+
  */
 
 /**
- * ------------------------------------------------------------------------------
+
  * FUNGSI 1: SANITASI OUTPUT HTML (XSS PROTECTION)
- * ------------------------------------------------------------------------------
+
  * Membungkus data yang berasal dari input pengguna/database sebelum dicetak
  * ke browser untuk mencegah injeksi script berbahaya (Cross-Site Scripting).
  *
@@ -29,9 +28,9 @@ function e($value)
 }
 
 /**
- * ------------------------------------------------------------------------------
+
  * FUNGSI 2: PERHITUNGAN CHECKSUM CRC16-CCITT STANDAR EMVCo QRIS
- * ------------------------------------------------------------------------------
+
  * Menghitung kode verifikasi 4 karakter heksadesimal di akhir string QRIS.
  * Menggunakan polinomial 0x1021 dengan nilai awal 0xFFFF sesuai spesifikasi ASPI.
  *
@@ -55,9 +54,9 @@ function qris_crc16($str)
 }
 
 /**
- * ------------------------------------------------------------------------------
+
  * FUNGSI 3: KONVERSI QRIS STATIS MENJADI DINAMIS DENGAN NOMINAL OTOMATIS
- * ------------------------------------------------------------------------------
+
  * Menyuntikkan nominal tagihan ke dalam kode QRIS agar saat di-scan oleh pelanggan
  * menggunakan aplikasi m-Banking/E-Wallet, nominal pembayaran otomatis terisi pas.
  *
@@ -98,9 +97,9 @@ function buat_qris_dinamis($static_qris, $nominal)
 }
 
 /**
- * ------------------------------------------------------------------------------
+
  * FUNGSI 4: PENGIRIMAN NOTIFIKASI OTOMATIS KE TELEGRAM BOT
- * ------------------------------------------------------------------------------
+
  * Mengirim pesan instan melalui protokol HTTPS POST ke Telegram Bot API.
  * Digunakan untuk mengabari kasir/barista ketika ada transaksi QRIS yang sukses.
  *
