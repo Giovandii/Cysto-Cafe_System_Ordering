@@ -585,7 +585,7 @@ try {
                         <div class="card-body">
                             <div class="card-info">
                                 <h3 class="card-title"><?= e($m['nama']) ?></h3>
-    <!-- Tambahkan deskripsi di bawah judul menu -->
+    <!--Deskripsi di bawah judul menu -->
                                 <?php
                                     $daftar_deskripsi = [
                                         'Nasi Goreng Spesial' => 'Nasi goreng dengan bumbu khas, telur ceplok, udang, dan kerupuk.',
@@ -695,15 +695,15 @@ try {
             container.innerHTML = `
                 <label class="checkbox-label" onclick="handleCheckboxClick(event, this)">
                     <input type="checkbox" name="opt_catatan" value="Ice" onchange="handleCheckboxChange(this)">
-                    <span>🧊 Ice (Dingin)</span>
+                    <span>Ice (Dingin)</span>
                 </label>
                 <label class="checkbox-label" onclick="handleCheckboxClick(event, this)">
                     <input type="checkbox" name="opt_catatan" value="No Ice" onchange="handleCheckboxChange(this)">
-                    <span>☕ No Ice (Hangat/Tanpa Es)</span>
+                    <span>No Ice (Hangat/Tanpa Es)</span>
                 </label>
                 <label class="checkbox-label" onclick="handleCheckboxClick(event, this)">
                     <input type="checkbox" name="opt_catatan" value="other" onchange="toggleOtherNote(this)">
-                    <span>✏️ Other (Catatan Manual)</span>
+                    <span>Other (Catatan Manual)</span>
                 </label>
             `;
         } else {
