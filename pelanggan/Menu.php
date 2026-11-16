@@ -711,15 +711,15 @@ try {
             container.innerHTML = `
                 <label class="checkbox-label" onclick="handleCheckboxClick(event, this)">
                     <input type="checkbox" name="opt_catatan" value="Pedas" onchange="handleCheckboxChange(this)">
-                    <span>🌶️ Pedas</span>
+                    <span>Pedas</span>
                 </label>
                 <label class="checkbox-label" onclick="handleCheckboxClick(event, this)">
                     <input type="checkbox" name="opt_catatan" value="Tidak Pedas" onchange="handleCheckboxChange(this)">
-                    <span>🍃 Tidak Pedas</span>
+                    <span>Tidak Pedas</span>
                 </label>
                 <label class="checkbox-label" onclick="handleCheckboxClick(event, this)">
                     <input type="checkbox" name="opt_catatan" value="other" onchange="toggleOtherNote(this)">
-                    <span>✏️ Other (Catatan Manual)</span>
+                    <span>Other (Catatan Manual)</span>
                 </label>
             `;
         }

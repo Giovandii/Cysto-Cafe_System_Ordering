@@ -250,7 +250,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 <label class="pay-option-card">
                     <input type="radio" name="metode_pembayaran" value="kasir" checked>
                     <div class="pay-info">
-                        <div class="pay-info-title">💵 Bayar ke Kasir (Tunai)</div>
+                        <div class="pay-info-title">Bayar ke Kasir (Tunai)</div>
                         <div class="pay-info-sub">Tunjukkan kode pesanan dan bayar langsung di kasir</div>
                     </div>
                 </label>
@@ -259,7 +259,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 <label class="pay-option-card">
                     <input type="radio" name="metode_pembayaran" value="qris">
                     <div class="pay-info">
-                        <div class="pay-info-title">📱 QRIS (Instant)</div>
+                        <div class="pay-info-title">QRIS (Instant)</div>
                         <div class="pay-info-sub">Scan QR via BCA, GoPay, OVO, ShopeePay, Dana, m-Banking</div>
                     </div>
                 </label>
