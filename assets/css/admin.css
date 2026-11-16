@@ -1,0 +1,349 @@
+/* Halaman Kelola Item - warna, font, dan ukuran disamakan dengan Stok Item.
+   Tanpa CSS variable supaya tetap tampil walau :root tidak terbaca.
+   Palet:
+   bg: #f6f3ed
+   card: #faf8f4
+   card-line: #eee7dc
+   brown: #5b3d2e
+   brown-deep: #3f261b
+   brown-soft: #6f4b3a
+   ink: #3d2417
+   row-line: #ece7df
+   row-hover: #f7f2ec
+   pill-bg: #efe6df
+   nav-active: #ebe3dc
+   ok-bg: #dcebd9
+   ok-text: #3f6338
+   bad-bg: #f5dcda
+   bad-text: #9c3f3a
+   focus: #e3c78b
+*/
+
+/* Warna, font, dan ukuran disamakan dengan halaman Stok Item */
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+    background: #f6f3ed;
+    color: #5b3d2e;
+    min-height: 100vh;
+}
+
+a { color: inherit; text-decoration: none; }
+
+.layout {
+    display: grid;
+    grid-template-columns: 15.6111rem minmax(0, 1fr);
+    gap: 1.8889rem;
+    padding: 1.3889rem 1.5556rem 1.3889rem 1.4444rem;
+    min-height: 100vh;
+}
+
+/* ---------- Sidebar (markup dari includes/sidebar.php) ----------
+   Jika StokItem.php sudah memuat CSS sidebar sendiri, bagian ini boleh dihapus
+   dan file CSS tersebut dipakai langsung. */
+.sidebar-container {
+    background: #5b3d2e;
+    border-radius: 1.3333rem;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 1.3889rem;
+    height: calc(100vh - 2.7778rem);
+}
+
+.sidebar-brand {
+    background: #3f261b;
+    color: #fff7ee;
+    display: flex;
+    align-items: center;
+    gap: 0.7778rem;
+    padding: 0 1.2222rem;
+    height: 3.7778rem;
+    border-radius: 0.7778rem;
+}
+
+.brand-icon { display: flex; }
+
+.brand-text {
+    font-size: 1.2222rem;
+    font-weight: 700;
+}
+
+.sidebar-user {
+    background: #6f4b3a;
+    color: #fff7ee;
+    display: flex;
+    align-items: center;
+    gap: 0.7778rem;
+    padding: 0 1.2222rem;
+    height: 3rem;
+    margin-top: 0.5rem;
+    border-radius: 0.6667rem;
+}
+
+.user-greeting {
+    font-size: 0.9444rem;
+    font-weight: 700;
+}
+
+.sidebar-nav {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7222rem;
+    margin-top: 1.5rem;
+}
+
+.nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.8889rem;
+    height: 3.1111rem;
+    padding: 0 1rem;
+    border-radius: 0.6667rem;
+    background: linear-gradient(180deg, #fff 0%, #f4eee7 100%);
+    box-shadow: 0 0.1111rem 0.2222rem rgba(0, 0, 0, .25);
+    color: #5b3d2e;
+    transition: background .15s ease;
+}
+
+.nav-btn:hover { background: #ebe3dc; }
+.nav-btn:focus-visible { outline: 3px solid #e3c78b; outline-offset: 0.1111rem; }
+.nav-btn.active { background: #ebe3dc; }
+
+.btn-icon { display: flex; flex: none; }
+.btn-icon svg { width: 1.4167rem; height: 1.4167rem; }
+
+.btn-label {
+    font-size: 0.9444rem;
+    font-weight: 700;
+}
+
+.sidebar-footer { margin-top: auto; }
+
+/* ---------- Konten ---------- */
+.content { min-width: 0; }
+
+.page-head h1 {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1.15;
+    color: #3d2417;
+}
+
+.page-head p {
+    font-size: 0.7778rem;
+    font-weight: 400;
+    color: #5b3d2e;
+    margin-top: 0.1111rem;
+}
+
+.card {
+    margin-top: 1.2222rem;
+    background: #faf8f4;
+    border: 1px solid #eee7dc;
+    border-radius: 1.3333rem;
+    padding: 1.5rem 1.5rem 1.6667rem;
+}
+
+/* ---------- Filter & pencarian ---------- */
+.toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.7778rem 1.3333rem;
+}
+
+.tool {
+    display: flex;
+    align-items: center;
+    gap: 0.4444rem;
+    height: 2.1667rem;
+    padding: 0 0.6667rem;
+    background: #fff;
+    border: 1px solid #5b3d2e;
+    border-radius: 0.5556rem;
+    font-size: 0.7778rem;
+    font-weight: 400;
+    color: #3d2417;
+    white-space: nowrap;
+}
+
+.tool.search { flex: 1 1 16rem; max-width: 25.5556rem; min-width: 15rem; }
+.tool .lbl-big { font-size: 0.8889rem; }
+
+.tool select,
+.tool input {
+    height: 1.5556rem;
+    border: 0;
+    background: transparent;
+    color: #3d2417;
+    font-family: 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.7778rem;
+    outline: none;
+}
+
+.tool select {
+    appearance: none;
+    cursor: pointer;
+    padding: 0 1.2222rem 0 0.2222rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%233d2417' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.1111rem center;
+}
+
+.tool input { flex: 1; min-width: 0; width: 100%; }
+.tool input::placeholder { color: #7a6a60; }
+
+.tool:focus-within { box-shadow: 0 0 0 3px #e3c78b; }
+
+.tool button {
+    height: 1.5556rem;
+    padding: 0 0.7778rem;
+    border: 0;
+    border-radius: 0.3889rem;
+    background: #5b3d2e;
+    color: #fff7ee;
+    font-family: 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.7222rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.tool button:hover { background: #3f261b; }
+.tool button:focus-visible { outline: 3px solid #e3c78b; outline-offset: 1px; }
+
+.notif {
+    margin-top: 0.8889rem;
+    padding: 0.6111rem 0.8889rem;
+    border-radius: 0.5556rem;
+    font-size: 0.7778rem;
+    font-weight: 500;
+    background: #f5dcda;
+    color: #9c3f3a;
+    border: 1px solid #e5b8b4;
+}
+
+/* ---------- Tabel ---------- */
+.table-wrap {
+    margin-top: 1.4444rem;
+    border-radius: 0.7778rem;
+    overflow-x: auto;
+    background: #fff;
+}
+
+table { width: 100%; border-collapse: collapse; }
+
+thead th {
+    background: #5b3d2e;
+    color: #fff;
+    font-size: 0.7778rem;
+    font-weight: 700;
+    text-align: left;
+    padding: 0 clamp(0.375rem, 1vw, 1rem);
+    height: 2.8333rem;
+}
+
+thead th:first-child { border-top-left-radius: 0.7778rem; }
+thead th:last-child  { border-top-right-radius: 0.7778rem; }
+
+th.center, td.center { text-align: center; }
+th.col-no, td.no { width: clamp(2rem, 4vw, 3.5556rem); }
+
+tbody td {
+    height: 4.2778rem;
+    padding: 0 clamp(0.375rem, 1vw, 1rem);
+    background: #fff;
+    border-bottom: 1px solid #ece7df;
+    font-size: 0.7778rem;
+    font-weight: 400;
+    color: #3d2417;
+    vertical-align: middle;
+}
+
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:hover td { background: #f7f2ec; }
+
+.item-cell {
+    display: flex;
+    align-items: center;
+    gap: clamp(0.5rem, 1.4vw, 0.7778rem);
+    font-size: 0.8333rem;
+    font-weight: 700;
+}
+
+.item-thumb {
+    width: clamp(2.25rem, 4.5vw, 2.7778rem);
+    height: clamp(2.25rem, 4.5vw, 2.7778rem);
+    border-radius: 0.4444rem;
+    object-fit: cover;
+    flex: none;
+    background: #efe6df;
+}
+
+td.harga { font-weight: 600; }
+
+.badge-jenis {
+    display: inline-block;
+    padding: 0.3333rem 0.8333rem;
+    border-radius: 55.5rem;
+    background: #efe6df;
+    color: #5b3d2e;
+    font-size: 0.7222rem;
+    font-weight: 500;
+}
+
+.badge-stok {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3333rem;
+    padding: 0.3333rem 0.7778rem;
+    border-radius: 55.5rem;
+    background: #dcebd9;
+    color: #3f6338;
+    font-size: 0.7222rem;
+    font-weight: 700;
+}
+
+.badge-stok.habis { background: #f5dcda; color: #9c3f3a; }
+
+.btn-edit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.4444rem;
+    color: #5b3d2e;
+    transition: background .15s ease;
+}
+
+.btn-edit:hover { background: #efe6df; }
+.btn-edit:focus-visible { outline: 3px solid #e3c78b; outline-offset: 1px; }
+
+.empty {
+    padding: 2rem 1.1111rem;
+    text-align: center;
+    font-size: 0.7778rem;
+    color: #7a6a60;
+}
+
+/* ---------- Responsif ---------- */
+/* Sama seperti Stok Item: sidebar tetap di kiri, konten ikut menyempit.
+   Baru menumpuk ke atas di layar setipis ponsel. */
+@media (max-width: 640px) {
+    .layout { grid-template-columns: minmax(0, 1fr); gap: 1.1111rem; padding: 0.8889rem; }
+    .sidebar-container { position: static; height: auto; }
+    .sidebar-footer { margin-top: 0.7778rem; }
+    .page-head h1 { font-size: 1.4444rem; }
+    .card { padding: 1rem; }
+    .tool.search { flex: 1 1 100%; max-width: none; }
+    table { min-width: 34rem; }
+}
+
+.badge-jenis, .badge-stok, td.harga { white-space: nowrap; }
