@@ -48,22 +48,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         ]);
 
         // 2. Simpan setiap item ke tabel detail_pesanan
-        $stmt_detail = $pdo->prepare("
-            INSERT INTO detail_pesanan (id_pesanan, id_menu, jumlah, harga_satuan, subtotal, catatan)
-            VALUES (:id_pesanan, :id_menu, :jumlah, :harga, :subtotal, :catatan)
-        ");
-
-        foreach ($_SESSION['keranjang'] as $item) {
-            $subtotal = $item['harga'] * $item['jumlah'];
-            $stmt_detail->execute([
-                ':id_pesanan' => $id_pesanan,
-                ':id_menu'    => $item['id_menu'],
-                ':jumlah'     => $item['jumlah'],
-                ':harga'      => $item['harga'],
-                ':subtotal'   => $subtotal,
-                ':catatan'    => !empty($item['catatan']) ? $item['catatan'] : null
-            ]);
-        }
+ $stmt_detail = $pdo->prepare("
+    INSERT INTO detail_pesanan (id_pesanan, id_menu, jumlah, harga_satuan, subtotal, catatan)
+    VALUES (:id_pesanan, :id_menu, :jumlah, :harga, :subtotal, :catatan)
+");
+// Siapkan query untuk memotong stok di tabel menu
+// Menggunakan GREATEST(0, stok - jumlah) agar stok tidak menjadi minus (< 0)
+$stmt_kurang_stok = $pdo->prepare("
+    UPDATE menu 
+    SET stok = GREATEST(0, stok - :jumlah) 
+    WHERE id_menu = :id_menu
+");
+foreach ($_SESSION['keranjang'] as $item) {
+    $subtotal = $item['harga'] * $item['jumlah'];
+    
+    // Simpan rincian pesanan
+    $stmt_detail->execute([
+        ':id_pesanan' => $id_pesanan,
+        ':id_menu'    => $item['id_menu'],
+        ':jumlah'     => $item['jumlah'],
+        ':harga'      => $item['harga'],
+        ':subtotal'   => $subtotal,
+        ':catatan'    => !empty($item['catatan']) ? $item['catatan'] : null
+    ]);
+    // Potong stok menu sesuai jumlah yang dibeli pelanggan
+    $stmt_kurang_stok->execute([
+        ':jumlah'  => $item['jumlah'],
+        ':id_menu' => $item['id_menu']
+    ]);
+}
 
         // 3. Simpan pilihan metode awal ke tabel transaksi
         $id_trx = 'TRX-' . strtoupper(substr(uniqid(), -4));
