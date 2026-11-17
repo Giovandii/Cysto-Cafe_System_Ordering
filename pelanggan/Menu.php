@@ -105,7 +105,7 @@ if ($search !== '') {
     $params[':search'] = '%' . strtolower($search) . '%';
 }
 
-$sql .= " ORDER BY id_menu ASC";
+$sql .= " ORDER BY (CASE WHEN stok > 0 THEN 0 ELSE 1 END) ASC, id_menu ASC";
 
 try {
     $stmt = $pdo->prepare($sql);
@@ -145,6 +145,26 @@ try {
             align-items: flex-start;
             font-family: var(--font-serif);
         }
+
+        .menu-card.out-of-stock {
+    opacity: 0.6;
+    filter: grayscale(100%); /* Bikin gambar dan kartu jadi abu-abu */
+    position: relative;
+    pointer-events: none; /* Mencegah tombol plus diklik */
+}
+.badge-habis {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: #E53E3E;
+    color: #FFFFFF;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 6px;
+    z-index: 2;
+    letter-spacing: 0.5px;
+}
 
         .mobile-container {
             width: 100%;
@@ -568,56 +588,82 @@ try {
         </nav>
 
         <!-- Grid Menu -->
-        <main class="menu-grid-2col">
+                <main class="menu-grid-2col">
             <?php if (empty($menus)): ?>
                 <div style="grid-column: 1 / -1; text-align: center; padding: 40px 10px; color: #7A6252;">
                     <p>Tidak ada menu yang ditemukan.</p>
                 </div>
             <?php else: ?>
-                <?php foreach ($menus as $m): ?>
-                    <article class="menu-card">
+                <?php 
+                // Daftar deskripsi menu kafe ditaruh di luar perulangan agar memori lebih hemat & rapi
+                $daftar_deskripsi = [
+                    'Nasi Goreng Spesial' => 'Nasi goreng dengan bumbu khas, telur ceplok, udang, dan kerupuk.',
+                    'Salted Caramel'      => 'Minuman Kopi susu dengan rasa caramel manis dan sedikit asin.',
+                    'Potato Wedges'       => 'Potongan kentang berbentuk wedges dengan tekstur renyah di luar dan lembut di dalam.',
+                    'Chicken Nugget'      => 'Nugget ayam dengan tekstur renyah disajikan bersama saus sambal.',
+                    'French Fries'        => 'Kentang goreng renyah dengan saus sambal dan mayones.',
+                    'Tea'                 => 'Minuman teh yang segar dan nikmat.',
+                    'Chocolate'           => 'Minuman cokelat dengan rasa manis dan creamy.'
+                ];
+                ?>
+
+                <?php foreach ($menus as $m): 
+                    // 1. Cek apakah stok menu habis (0 atau kurang)
+                    $is_habis = ((int)($m['stok'] ?? 0) <= 0);
+
+                    // 2. Ambil deskripsi menu
+                    $nama_menu = $m['nama'];
+                    $deskripsi = $daftar_deskripsi[$nama_menu] ?? 'Deskripsi menu belum tersedia.';
+                ?>
+                    <article class="menu-card <?= $is_habis ? 'out-of-stock' : '' ?>">
+                        <!-- Badge Merah jika Habis -->
+                        <?php if ($is_habis): ?>
+                            <span class="badge-habis">HABIS</span>
+                        <?php endif; ?>
+
                         <div class="card-img-wrap">
                             <img src="../assets/images/menu/<?= e($m['gambar'] ?? 'default-menu.png') ?>" 
                                  onerror="this.onerror=null; this.src='../assets/images/coffee-icon.svg';" 
                                  alt="<?= e($m['nama']) ?>" 
                                  class="card-img">
                         </div>
+
                         <div class="card-body">
                             <div class="card-info">
                                 <h3 class="card-title"><?= e($m['nama']) ?></h3>
-    <!--Deskripsi di bawah judul menu -->
-                                <?php
-                                    $daftar_deskripsi = [
-                                        'Nasi Goreng Spesial' => 'Nasi goreng dengan bumbu khas, telur ceplok, udang, dan kerupuk.',
-                                        'Salted Caramel' => 'Minuman Kopi susu dengan rasa caramel manis dan sedikit asin.',
-                                        'Potato Wedges' => 'Potongan kentang berbentuk wedges dengan tekstur renyah di luar dan lembut di dalam.',
-                                        'Chicken Nugget' => 'Nugget ayam dengan tekstur renyah disajikan bersama saus sambal.',
-                                        'French Fries' => 'Kentang goreng renyah dengan saus sambal dan mayones.',
-                                        'Tea' => 'Minuman teh yang segar dan nikmat.',
-                                        'Chocolate' => 'Minuman cokelat dengan rasa manis dan creamy.'
-                                    ];
-
-                                    $nama_menu = $m['nama'];
-                                    $deskripsi = $daftar_deskripsi[$nama_menu] ?? 'Deskripsi menu belum tersedia.';
-                                ?>
                                 <p class="card-desc"><?= e($deskripsi) ?></p>
-                                <p class="card-price">Rp. <?= number_format($m['harga'], 0, ',', '.') ?></p>
+                                <p class="card-price">
+                                    Rp. <?= number_format($m['harga'], 0, ',', '.') ?>
+                                    <?php if ($is_habis): ?>
+                                        <span style="display:block; font-size:11px; color:#E53E3E; font-weight:bold; margin-top:2px;">Stok Habis</span>
+                                    <?php endif; ?>
+                                </p>
                             </div>
-                            <!-- Tombol Plus Buka Modal Catatan -->
-                            <button type="button" class="btn-plus" 
-                                    onclick="bukaModalCatatan(<?= $m['id_menu'] ?>, '<?= e(addslashes($m['nama'])) ?>', <?= (int)$m['harga'] ?>, '<?= e($m['gambar'] ?? 'default-menu.png') ?>', '<?= e($m['kategori'] ?? 'food') ?>')" 
-                                    title="Tambah ke keranjang">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                                </svg>
-                            </button>
+
+                            <!-- Tombol Plus: Aktif jika ada stok, Terkunci tanda silang jika habis -->
+                            <?php if (!$is_habis): ?>
+                                <button type="button" class="btn-plus" 
+                                        onclick="bukaModalCatatan(<?= $m['id_menu'] ?>, '<?= e(addslashes($m['nama'])) ?>', <?= (int)$m['harga'] ?>, '<?= e($m['gambar'] ?? 'default-menu.png') ?>', '<?= e($m['kategori'] ?? 'food') ?>')" 
+                                        title="Tambah ke keranjang">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg>
+                                </button>
+                            <?php else: ?>
+                                <button type="button" class="btn-plus" style="background:#E2E8F0; cursor:not-allowed;" disabled title="Menu Habis">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A0AEC0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                                    </svg>
+                                </button>
+                            <?php endif; ?>
                         </div>
                     </article>
                 <?php endforeach; ?>
             <?php endif; ?>
         </main>
-
+        
         <!-- Floating Cart Bar -->
         <a href="keranjang.php" class="bottom-cart-bar" id="cartBar">
             <div class="cart-icon-group">
