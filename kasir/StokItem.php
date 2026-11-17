@@ -252,85 +252,23 @@ try {
                                 <th style="text-align: center; width: 90px;">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody>
+                                <tbody>
                             <?php if (empty($items)): ?>
-                                <!-- Contoh Tampilan Statis Sesuai Mockup jika Data DB Belum Masuk -->
-                                <tr id="row-1">
-                                    <td>1</td>
-                                    <td>
-                                        <div class="item-cell">
-                                            <!-- BENAR (Anti Looping) -->
-                                            <img src="..." onerror="this.onerror=null; this.src='../assets/images/coffee-icon.svg'">
-                                            <span class="item-title">Salted Caramel</span>
-                                        </div>
-                                    </td>
-                                    <td style="text-align: center;"><span class="badge-jenis">Minuman</span></td>
-                                    <td style="text-align: center;">
-                                        <span class="badge-stok">
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                            <span class="stock-val">67</span>
-                                        </span>
-                                    </td>
-                                    <td style="text-align: center;">
-                                        <button class="btn-edit-icon" onclick="enableEdit(1, 67)">
-                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-                                        </button>
-                                    </td>
-                                </tr>
-
-                                <tr id="row-2">
-                                    <td>2</td>
-                                    <td>
-                                        <div class="item-cell">
-                                            <!-- BENAR (Anti Looping) -->
-                                            <img src="..." onerror="this.onerror=null; this.src='../assets/images/coffee-icon.svg'">
-                                            <span class="item-title">Potato Wedges</span>
-                                        </div>
-                                    </td>
-                                    <td style="text-align: center;"><span class="badge-jenis">Snacks</span></td>
-                                    <td style="text-align: center;">
-                                        <span class="badge-stok">
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                            <span class="stock-val">25</span>
-                                        </span>
-                                    </td>
-                                    <td style="text-align: center;">
-                                        <button class="btn-edit-icon" onclick="enableEdit(2, 25)">
-                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-                                        </button>
-                                    </td>
-                                </tr>
-
-                                <tr id="row-3">
-                                    <td>3</td>
-                                    <td>
-                                        <div class="item-cell">
-                                            <!-- BENAR (Anti Looping) -->
-                                            <img src="..." onerror="this.onerror=null; this.src='../assets/images/coffee-icon.svg'">
-                                            <span class="item-title">French Fries</span>
-                                        </div>
-                                    </td>
-                                    <td style="text-align: center;"><span class="badge-jenis">Snacks</span></td>
-                                    <td style="text-align: center;">
-                                        <span class="badge-stok">
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                            <span class="stock-val">28</span>
-                                        </span>
-                                    </td>
-                                    <td style="text-align: center;">
-                                        <button class="btn-edit-icon" onclick="enableEdit(3, 28)">
-                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-                                        </button>
+                                <tr>
+                                    <td colspan="5" style="text-align: center; padding: 30px; color: #7A6252;">
+                                        Tidak ada item menu yang ditemukan.
                                     </td>
                                 </tr>
                             <?php else: ?>
-                                <!-- Perulangan Riil dari Database PostgreSQL -->
                                 <?php $no = 1; foreach ($items as $item): ?>
                                     <tr id="row-<?= $item['id_menu'] ?>">
                                         <td><?= $no++ ?></td>
                                         <td>
                                             <div class="item-cell">
-                                                <img src="../assets/images/menu/<?= e($item['gambar'] ?? 'default.png') ?>"  class="item-thumb" alt="<?= e($item['nama']) ?>">
+                                                <img src="../assets/images/menu/<?= e($item['gambar'] ?? 'default.png') ?>" 
+                                                     onerror="this.onerror=null; this.src='../assets/images/coffee-icon.svg';" 
+                                                     class="item-thumb" 
+                                                     alt="<?= e($item['nama']) ?>">
                                                 <span class="item-title"><?= e($item['nama']) ?></span>
                                             </div>
                                         </td>
