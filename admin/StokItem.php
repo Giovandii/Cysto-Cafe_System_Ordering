@@ -3,7 +3,7 @@ session_start();
 
 // Proteksi login
 if (!isset($_SESSION['user_id'])) {
-    header('Location: LoginForAdmin.php');
+    header('Location: Login.php');
     exit;
 }
 
