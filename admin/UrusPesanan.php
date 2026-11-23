@@ -227,14 +227,16 @@ if (!empty($selected_order['total_transaksi'])) {
                                     <input type="hidden" name="action" value="update_order">
                                     <input type="hidden" name="id_pesanan" value="<?= e($selected_order['id_pesanan']) ?>">
 
-                                    <label class="form-label">Tipe Pembayaran</label>
-                                    <div class="payment-toggle">
-                                        <select name="metode" class="form-control" style="width: 100%; height: 36px; border-radius: 8px; border: 1px solid #CFC5B8; padding: 0 10px; font-family: inherit;">
-                                            <option value="Cash">Cash</option>
-                                            <option value="Qris">QRIS</option>
-                                            <!-- <option value="QRIS">QRIS</option> -->
-                                        </select>
-                                    </div>
+                                    <label class="form-label">Metode Pembayaran (Pilihan Pelanggan)</label>
+<div class="payment-locked-box" style="display: flex; align-items: center; justify-content: space-between; background-color: #EDE5DD; border: 1.5px solid #CFC5B8; border-radius: 8px; padding: 10px 14px; margin-bottom: 12px;">
+    <div style="display: flex; align-items: center; gap: 8px;">
+        
+        <strong style="color: #5C4033; font-size: 14px; letter-spacing: 0.5px;">
+            <?= strtoupper(e($selected_order['metode_bayar'] ?? 'Cash')) ?>
+            <?= (strtoupper($selected_order['metode_bayar'] ?? '') === 'CASH') ? '(Tunai di Kasir)' : '(QRIS)' ?>
+        </strong>
+    </div></div>
+<input type="hidden" name="metode" value="<?= e($selected_order['metode_bayar'] ?? 'Cash') ?>">
 
                                     <label class="form-label" style="margin-top: 10px;">Status Pesanan</label>
                                     <div class="status-toggle">
