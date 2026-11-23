@@ -10,19 +10,18 @@ require_once __DIR__ . '/../includes/csrf.php';
 require_once __DIR__ . '/../includes/helpers.php';
 
 // Tentukan peran yang diminta dari parameter URL (admin atau kasir)
-$role_param = strtolower(trim($_GET['role'] ?? ''));
+$role_param = strtolower(trim($_POST['role'] ?? $_GET['role'] ?? 'kasir'));
+if ($role_param !== 'admin' && $role_param !== 'kasir') {
+    $role_param = 'kasir';
+}
 if ($role_param === 'kasir') {
     $judul_login = 'Login Kasir';
     $placeholder_user = 'Username Kasir';
     $btn_text = 'Masuk Kasir';
-} elseif ($role_param === 'admin') {
+} else {
     $judul_login = 'Login Admin';
     $placeholder_user = 'Username Admin';
     $btn_text = 'Masuk Admin';
-} else {
-    $judul_login = 'Login Petugas';
-    $placeholder_user = 'Username Staff / Admin';
-    $btn_text = 'Masuk';
 }
 
 $error = '';
@@ -120,7 +119,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <!-- Kartu Putih Melayang Form Login -->
         <main class="auth-card">
-            <h2 class="card-title">Login Admin</h2>
+            <h2 class="card-title">
+    Login <?= in_array(strtolower($_GET['role'] ?? ''), ['kasir', 'admin']) ? ucfirst(strtolower($_GET['role'])) : 'Petugas' ?>
+</h2>
             <p class="card-subtitle">Masukkan akun untuk akses manajemen</p>
 
             <!-- Tampilkan Pesan Error Jika Ada -->
