@@ -63,11 +63,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         $total_harga += ($item['harga'] * $item['jumlah']);
     }
 
+    // ✅ TAMBAHAN: hitung kuantitas menu ini di keranjang
+    $menu_item_count = 0;
+    foreach ($_SESSION['keranjang'] as $item) {
+        if ((int)$item['id_menu'] === $id) {
+            $menu_item_count += (int)$item['jumlah'];
+        }
+    }
+
     header('Content-Type: application/json');
     echo json_encode([
         'status'       => 'success',
         'total_item'   => $total_item,
-        'total_format' => 'Rp. ' . number_format($total_harga, 0, ',', '.')
+        'total_format' => 'Rp. ' . number_format($total_harga, 0, ',', '.'),
+        'item_id'      => $id,          // ✅ TAMBAHAN
+        'item_count'   => $menu_item_count  // ✅ TAMBAHAN
     ]);
     exit;
 }
@@ -75,10 +85,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 // 3. HITUNG JUMLAH KERANJANG SAAT RELOAD
 $cart_count = 0;
 $cart_total = 0;
+$menu_qty   = [];
 if (!empty($_SESSION['keranjang'])) {
     foreach ($_SESSION['keranjang'] as $item) {
-        $cart_count += $item['jumlah'];
-        $cart_total += ($item['harga'] * $item['jumlah']);
+        $cart_count += (int)$item['jumlah'];
+        $cart_total += ((float)$item['harga'] * (int)$item['jumlah']);
+        $m_id = (int)$item['id_menu'];
+        $menu_qty[$m_id] = ($menu_qty[$m_id] ?? 0) + (int)$item['jumlah'];
     }
 }
 
@@ -147,24 +160,24 @@ try {
         }
 
         .menu-card.out-of-stock {
-    opacity: 0.6;
-    filter: grayscale(100%); /* Bikin gambar dan kartu jadi abu-abu */
-    position: relative;
-    pointer-events: none; /* Mencegah tombol plus diklik */
-}
-.badge-habis {
-    position: absolute;
-    top: 8px;
-    left: 8px;
-    background: #E53E3E;
-    color: #FFFFFF;
-    font-size: 10px;
-    font-weight: 800;
-    padding: 3px 8px;
-    border-radius: 6px;
-    z-index: 2;
-    letter-spacing: 0.5px;
-}
+            opacity: 0.6;
+            filter: grayscale(100%);
+            position: relative;
+            pointer-events: none;
+        }
+        .badge-habis {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: #E53E3E;
+            color: #FFFFFF;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 6px;
+            z-index: 2;
+            letter-spacing: 0.5px;
+        }
 
         .mobile-container {
             width: 100%;
@@ -225,6 +238,33 @@ try {
             align-items: center;
             gap: 10px;
             margin-bottom: 18px;
+        }
+
+        .card-img-wrap {
+            position: relative;
+        }
+
+        /* ✅ Badge GoFood */
+        .ordered-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background-color: var(--color-primary);
+            color: #FFFFFF;
+            font-size: 11.5px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+            z-index: 5;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
+        }
+
+        /* ✅ Highlight kartu yang sudah dipesan */
+        .menu-card.is-ordered {
+            border: 1.5px solid var(--color-primary);
+            background-color: #FAF8F5;
         }
 
         .search-box svg { color: #8C7D70; }
@@ -404,7 +444,6 @@ try {
 
         .cart-arrow { display: flex; align-items: center; }
 
-        /* Modal Pop-up Catatan Pesanan */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -490,7 +529,6 @@ try {
             border-color: var(--color-primary);
         }
 
-        /* Checkbox Group Catatan */
         .checkbox-group {
             display: flex;
             flex-direction: column;
@@ -588,14 +626,13 @@ try {
         </nav>
 
         <!-- Grid Menu -->
-                <main class="menu-grid-2col">
+        <main class="menu-grid-2col">
             <?php if (empty($menus)): ?>
                 <div style="grid-column: 1 / -1; text-align: center; padding: 40px 10px; color: #7A6252;">
                     <p>Tidak ada menu yang ditemukan.</p>
                 </div>
             <?php else: ?>
                 <?php 
-                // Daftar deskripsi menu kafe ditaruh di luar perulangan agar memori lebih hemat & rapi
                 $daftar_deskripsi = [
                     'Nasi Goreng Spesial' => 'Nasi goreng dengan bumbu khas, telur ceplok, udang, dan kerupuk.',
                     'Salted Caramel'      => 'Minuman Kopi susu dengan rasa caramel manis dan sedikit asin.',
@@ -607,24 +644,31 @@ try {
                 ];
                 ?>
 
-                <?php foreach ($menus as $m): 
-                    // 1. Cek apakah stok menu habis (0 atau kurang)
-                    $is_habis = ((int)($m['stok'] ?? 0) <= 0);
-
-                    // 2. Ambil deskripsi menu
-                    $nama_menu = $m['nama'];
-                    $deskripsi = $daftar_deskripsi[$nama_menu] ?? 'Deskripsi menu belum tersedia.';
+                <?php foreach ($menus as $m):
+                    $is_habis     = ((int)($m['stok'] ?? 0) <= 0);
+                    $deskripsi    = $daftar_deskripsi[$m['nama']] ?? 'Deskripsi menu belum tersedia.';
+                    $qty_terpesan = $menu_qty[$m['id_menu']] ?? 0;  // ✅ untuk badge GoFood
                 ?>
-                    <article class="menu-card <?= $is_habis ? 'out-of-stock' : '' ?>">
-                        <!-- Badge Merah jika Habis -->
+                    <article class="menu-card <?= $is_habis ? 'out-of-stock' : ($qty_terpesan > 0 ? 'is-ordered' : '') ?>"
+                             id="card-menu-<?= $m['id_menu'] ?>">
+
                         <?php if ($is_habis): ?>
                             <span class="badge-habis">HABIS</span>
                         <?php endif; ?>
 
                         <div class="card-img-wrap">
-                            <img src="../assets/images/menu/<?= e($m['gambar'] ?? 'default-menu.png') ?>" 
-                                 onerror="this.onerror=null; this.src='../assets/images/coffee-icon.svg';" 
-                                 alt="<?= e($m['nama']) ?>" 
+                            <!-- ✅ Badge Kuantitas GoFood -->
+                            <?php if (!$is_habis): ?>
+                                <span class="ordered-badge"
+                                      id="badge-menu-<?= $m['id_menu'] ?>"
+                                      style="<?= $qty_terpesan > 0 ? '' : 'display: none;' ?>">
+                                    <?= $qty_terpesan ?>x
+                                </span>
+                            <?php endif; ?>
+
+                            <img src="../assets/images/menu/<?= e($m['gambar'] ?? 'default-menu.png') ?>"
+                                 onerror="this.onerror=null; this.src='../assets/images/coffee-icon.svg';"
+                                 alt="<?= e($m['nama']) ?>"
                                  class="card-img">
                         </div>
 
@@ -640,10 +684,9 @@ try {
                                 </p>
                             </div>
 
-                            <!-- Tombol Plus: Aktif jika ada stok, Terkunci tanda silang jika habis -->
                             <?php if (!$is_habis): ?>
-                                <button type="button" class="btn-plus" 
-                                        onclick="bukaModalCatatan(<?= $m['id_menu'] ?>, '<?= e(addslashes($m['nama'])) ?>', <?= (int)$m['harga'] ?>, '<?= e($m['gambar'] ?? 'default-menu.png') ?>', '<?= e($m['kategori'] ?? 'food') ?>')" 
+                                <button type="button" class="btn-plus"
+                                        onclick="bukaModalCatatan(<?= $m['id_menu'] ?>, '<?= e(addslashes($m['nama'])) ?>', <?= (int)$m['harga'] ?>, '<?= e($m['gambar'] ?? 'default-menu.png') ?>', '<?= e($m['kategori'] ?? 'food') ?>')"
                                         title="Tambah ke keranjang">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                         <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -701,12 +744,8 @@ try {
 
             <label style="font-size: 13px; font-weight: 700; color: #382519; display: block; margin-bottom: 8px;">Pilihan Catatan (Opsional):</label>
             
-            <!-- Checkbox Dinamis Berdasarkan Kategori -->
-            <div id="modalCheckboxOptions" class="checkbox-group">
-                <!-- Diisi otomatis lewat JS -->
-            </div>
+            <div id="modalCheckboxOptions" class="checkbox-group"></div>
 
-            <!-- Area Input Teks Manual saat "Other" dipilih -->
             <div id="otherNoteContainer" style="display: none; margin-top: 6px;">
                 <label style="font-size: 12px; font-weight: 600; color: #5C4033; display: block; margin-bottom: 4px;">Catatan Khusus Lainnya:</label>
                 <textarea id="modalNote" rows="2" class="note-input" placeholder="Contoh: Es sedikit, bumbu dipisah, tanpa bawang..."></textarea>
@@ -718,7 +757,6 @@ try {
         </div>
     </div>
 
-    <!-- Script AJAX & Modal -->
     <script>
     let activeItem = null;
 
@@ -733,7 +771,6 @@ try {
         const otherContainer = document.getElementById('otherNoteContainer');
         otherContainer.style.display = 'none';
 
-        // Deteksi Kategori: Minuman vs Makanan/Snack
         const kat = (kategori || '').toLowerCase();
         const isMinuman = (kat === 'drink' || kat === 'minuman');
 
@@ -753,7 +790,6 @@ try {
                 </label>
             `;
         } else {
-            // Makanan & Snack
             container.innerHTML = `
                 <label class="checkbox-label" onclick="handleCheckboxClick(event, this)">
                     <input type="checkbox" name="opt_catatan" value="Pedas" onchange="handleCheckboxChange(this)">
@@ -777,12 +813,10 @@ try {
         document.getElementById('modalCatatan').classList.remove('active');
     }
 
-    // Mencegah konflik opsi berlawanan (Pedas vs Tidak Pedas, Ice vs No Ice)
     function handleCheckboxChange(el) {
         const parent = el.closest('.checkbox-label');
         if (el.checked) {
             parent.classList.add('checked');
-            // Uncheck opsi yang berlawanan
             const allCheckboxes = document.querySelectorAll('input[name="opt_catatan"]');
             allCheckboxes.forEach(cb => {
                 if (cb !== el && cb.value !== 'other') {
@@ -795,7 +829,6 @@ try {
         }
     }
 
-    // Toggle tampilan textarea saat opsi Other dipilih
     function toggleOtherNote(el) {
         const parent = el.closest('.checkbox-label');
         const otherContainer = document.getElementById('otherNoteContainer');
@@ -812,7 +845,6 @@ try {
         }
     }
 
-    // Handler klik label agar konsisten
     function handleCheckboxClick(e, label) {
         if (e.target.tagName.toLowerCase() === 'input') return;
         const cb = label.querySelector('input[type="checkbox"]');
@@ -827,23 +859,16 @@ try {
     function submitItemDenganCatatan() {
         if (!activeItem) return;
 
-        // Ambil semua opsi yang dipilih
         const selected = [];
         const checkboxes = document.querySelectorAll('input[name="opt_catatan"]:checked');
         
         checkboxes.forEach(cb => {
-            if (cb.value !== 'other') {
-                selected.push(cb.value);
-            }
+            if (cb.value !== 'other') selected.push(cb.value);
         });
 
-        // Ambil catatan manual jika ada
         const manualNote = document.getElementById('modalNote').value.trim();
-        if (manualNote !== '') {
-            selected.push(manualNote);
-        }
+        if (manualNote !== '') selected.push(manualNote);
 
-        // Gabungkan catatan (Contoh: "Pedas, tanpa sayur" atau "Ice, gula sedikit")
         const finalCatatan = selected.join(', ');
 
         const formData = new FormData();
@@ -864,13 +889,23 @@ try {
             document.getElementById('cartCount').innerText = data.total_item;
             document.getElementById('cartTotal').innerText = 'Total : ' + data.total_format;
 
+            // ✅ Update badge GoFood
+            const badge = document.getElementById('badge-menu-' + data.item_id);
+            const card  = document.getElementById('card-menu-' + data.item_id);
+
+            if (badge) {
+                badge.innerText = data.item_count + 'x';
+                badge.style.display = '';
+                badge.style.transform = 'scale(1.35)';
+                setTimeout(() => { badge.style.transform = 'scale(1)'; }, 180);
+            }
+            if (card) card.classList.add('is-ordered');
+
             tutupModalCatatan();
 
             const cartBar = document.getElementById('cartBar');
             cartBar.style.transform = 'translateX(-50%) scale(1.03)';
-            setTimeout(() => {
-                cartBar.style.transform = 'translateX(-50%) scale(1)';
-            }, 150);
+            setTimeout(() => { cartBar.style.transform = 'translateX(-50%) scale(1)'; }, 150);
         })
         .catch(err => console.error('Error tambah item:', err));
     }
