@@ -632,23 +632,11 @@ try {
                     <p>Tidak ada menu yang ditemukan.</p>
                 </div>
             <?php else: ?>
-                <?php 
-                $daftar_deskripsi = [
-                    'Nasi Goreng Spesial' => 'Nasi goreng dengan bumbu khas, telur ceplok, udang, dan kerupuk.',
-                    'Salted Caramel'      => 'Minuman Kopi susu dengan rasa caramel manis dan sedikit asin.',
-                    'Potato Wedges'       => 'Potongan kentang berbentuk wedges dengan tekstur renyah di luar dan lembut di dalam.',
-                    'Chicken Nugget'      => 'Nugget ayam dengan tekstur renyah disajikan bersama saus sambal.',
-                    'French Fries'        => 'Kentang goreng renyah dengan saus sambal dan mayones.',
-                    'Tea'                 => 'Minuman teh yang segar dan nikmat.',
-                    'Chocolate'           => 'Minuman cokelat dengan rasa manis dan creamy.'
-                ];
-                ?>
-
                 <?php foreach ($menus as $m):
-                    $is_habis     = ((int)($m['stok'] ?? 0) <= 0);
-                    $deskripsi    = $daftar_deskripsi[$m['nama']] ?? 'Deskripsi menu belum tersedia.';
-                    $qty_terpesan = $menu_qty[$m['id_menu']] ?? 0;  // ✅ untuk badge GoFood
-                ?>
+    $is_habis     = ((int)($m['stok'] ?? 0) <= 0);
+    $deskripsi    = !empty(trim($m['deskripsi'] ?? '')) ? $m['deskripsi'] : 'Deskripsi menu belum tersedia.';
+    $qty_terpesan = $menu_qty[$m['id_menu']] ?? 0;
+?>
                     <article class="menu-card <?= $is_habis ? 'out-of-stock' : ($qty_terpesan > 0 ? 'is-ordered' : '') ?>"
                              id="card-menu-<?= $m['id_menu'] ?>">
 
