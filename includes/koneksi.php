@@ -54,7 +54,15 @@ $total_bayar = $total_asli + $kode_unik;
             ]);
         }
 
-        header("Location: UrusPesanan.php?order_id=" . urlencode($id_pesanan) . "&pesan=sukses");
+        // Bawa filter & halaman aktif agar kasir tidak terlempar ke halaman 1
+        $params_kembali = ['order_id' => $id_pesanan, 'pesan' => 'sukses'];
+        foreach (['page', 'q', 'by'] as $k) {
+            if (isset($_GET[$k]) && is_string($_GET[$k]) && $_GET[$k] !== '') {
+                $params_kembali[$k] = $_GET[$k];
+            }
+        }
+
+        header("Location: UrusPesanan.php?" . http_build_query($params_kembali));
         exit;
     }
 }
