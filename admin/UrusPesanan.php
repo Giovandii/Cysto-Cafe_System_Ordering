@@ -1,11 +1,5 @@
 <?php
-session_start();
-
-// Proteksi Login
-if (!isset($_SESSION['user_id'])) {
-    header('Location: Login.php');
-    exit;
-}
+require_once __DIR__ . '/../includes/auth.php';
 
 $active_menu = 'UrusPesanan';
 
@@ -13,23 +7,86 @@ $active_menu = 'UrusPesanan';
 require_once __DIR__ . '/../includes/koneksi.php';
 require_once __DIR__ . '/../includes/helpers.php';
 
-$search_query = $_GET['q'] ?? '';
-$search_by = $_GET['by'] ?? 'id';
-$filter_waktu = $_GET['waktu'] ?? 'hari ini';
+$raw_q = $_GET['q'] ?? '';
+$search_query = is_string($raw_q) ? trim($raw_q) : '';
+$search_by = $_GET['by'] ?? 'semua';
 
-// 2. Query Mengambil Daftar Pesanan Aktif + Metode Pembayaran (jika ada)
+if (!in_array($search_by, ['semua', 'id', 'meja'], true)) {
+    $search_by = 'semua';
+}
+
+$per_page = 10;
+$page = max(1, (int)($_GET['page'] ?? 1));
+
+// 2. Susun klausa pencarian (nilai tetap diikat sebagai parameter, bukan digabung ke string SQL)
+$where = [];
+$params = [];
+if ($search_query !== '') {
+    $like = '%' . $search_query . '%';
+    if ($search_by === 'meja') {
+        $where[] = 'CAST(p.id_meja AS TEXT) ILIKE :q1';
+    } elseif ($search_by === 'id') {
+        $where[] = 'p.id_pesanan ILIKE :q1';
+    } else {
+        $where[] = '(p.id_pesanan ILIKE :q1 OR CAST(p.id_meja AS TEXT) ILIKE :q2)';
+        $params[':q2'] = $like;
+    }
+    $params[':q1'] = $like;
+}
+$sql_where = $where ? ' WHERE ' . implode(' AND ', $where) : '';
+
+// 3. Hitung total baris untuk menentukan jumlah halaman
+$pdo_jml = $pdo->prepare(
+    "SELECT COUNT(*) FROM pesanan p LEFT JOIN transaksi t ON p.id_pesanan = t.id_pesanan" . $sql_where
+);
+$pdo_jml->execute($params);
+$total_rows = (int)$pdo_jml->fetchColumn();
+$total_pages = max(1, (int)ceil($total_rows / $per_page));
+$page = min($page, $total_pages);
+$offset = ($page - 1) * $per_page;
+$baris_awal = ($total_rows === 0) ? 0 : $offset + 1;
+$baris_akhir = min($offset + $per_page, $total_rows);
+
+// Daftar nomor halaman dengan windowing: 1 ... 4 5 [6] 7 8 ... 20
+$daftar_halaman = [];
+for ($i = 1; $i <= $total_pages; $i++) {
+    if ($i === 1 || $i === $total_pages || abs($i - $page) <= 1) {
+        $daftar_halaman[] = $i;
+    } elseif (end($daftar_halaman) !== '...') {
+        $daftar_halaman[] = '...';
+    }
+}
+
+// Parameter filter yang harus ikut di setiap link navigasi
+$params_cari = [];
+if ($search_query !== '') {
+    $params_cari['q'] = $search_query;
+}
+if ($search_by !== 'semua') {
+    $params_cari['by'] = $search_by;
+}
+
+$params_halaman = $params_cari;
+if (isset($_GET['order_id']) && is_string($_GET['order_id']) && $_GET['order_id'] !== '') {
+    $params_halaman['order_id'] = $_GET['order_id'];
+}
+
+// 4. Query Mengambil Daftar Pesanan Aktif + Metode Pembayaran (jika ada), satu halaman saja
 $sql = "
     SELECT p.id_pesanan, p.waktu_pesan, p.id_meja, p.total, p.status,
            COALESCE(t.metode, '-') AS metode, t.id_transaksi
     FROM pesanan p
     LEFT JOIN transaksi t ON p.id_pesanan = t.id_pesanan
+" . $sql_where . "
     ORDER BY p.waktu_pesan DESC
-";
-$stmt = $pdo->query($sql);
+    LIMIT " . (int)$per_page . " OFFSET " . (int)$offset;
+$stmt = $pdo->prepare($sql);
+$stmt->execute($params);
 $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// 3. Tentukan Order Mana yang Sedang Dilihat Rinciannya (Default: Order Pertama)
-$selected_id = $_GET['order_id'] ?? ($orders[0]['id_pesanan'] ?? '');
+// 5. Tentukan Order Mana yang Sedang Dilihat Rinciannya (Default: Order Pertama)
+$raw_order = $_GET['order_id'] ?? '';
+$selected_id = is_string($raw_order) && $raw_order !== '' ? $raw_order : ($orders[0]['id_pesanan'] ?? '');
 
 // Ambil item menu yang dibeli untuk pesanan yang dipilih
 $order_items = [];
@@ -88,15 +145,29 @@ if (!empty($selected_id)) {
 
                 <!-- Filter & Search Bar -->
                 <div class="filter-bar">
-                    <div class="search-group">
+                    <form method="GET" action="" class="search-group">
+                        <div class="select-search-by">
+                            <span>Cari berdasarkan:</span>
+                            <select name="by" onchange="this.form.submit()">
+                                <option value="semua" <?= $search_by === 'semua' ? 'selected' : '' ?>>Semua</option>
+                                <option value="id" <?= $search_by === 'id' ? 'selected' : '' ?>>ID Pesanan</option>
+                                <option value="meja" <?= $search_by === 'meja' ? 'selected' : '' ?>>No. Meja</option>
+                            </select>
+                        </div>
                         <div class="search-input-box">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <circle cx="11" cy="11" r="8"></circle>
                                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                             </svg>
-                            <input type="text" placeholder="Cari pesanan (ID/meja/nama)">
+                            <input type="text" name="q" placeholder="Cari pesanan (ID/meja)" value="<?= e($search_query) ?>">
                         </div>
-                    </div>
+                        <button type="submit" class="btn-action">Cari</button>
+                        <?php if ($search_query !== ''): ?>
+                            <?php $params_reset = $params_halaman; ?>
+                            <?php unset($params_reset['q']); ?>
+                            <a href="?<?= e(http_build_query(array_merge($params_reset, ['page' => 1]))) ?>" class="btn-action" style="text-decoration:none;">Reset</a>
+                        <?php endif; ?>
+                    </form>
                 </div>
 
                 <!-- TABEL PESANAN (DINAMIS DARI DATABASE) -->
@@ -115,7 +186,9 @@ if (!empty($selected_id)) {
                         <tbody>
                             <?php if (empty($orders)): ?>
                                 <tr>
-                                    <td colspan="6" style="text-align:center; padding: 20px;">Belum ada data pesanan di database.</td>
+                                    <td colspan="6" style="text-align:center; padding: 20px;">
+                                        <?= $search_query !== '' ? 'Tidak ada pesanan yang cocok dengan pencarian.' : 'Belum ada data pesanan di database.' ?>
+                                    </td>
                                 </tr>
                             <?php else: ?>
                                 <?php foreach ($orders as $o): ?>
@@ -139,7 +212,7 @@ if (!empty($selected_id)) {
                                         <td><span class="badge <?= $badge_class ?>"><?= $status_label ?></span></td>
                                         <td class="action-btns">
                                             <!-- Tombol Detail akan me-reload halaman dengan order_id yang dipilih -->
-                                            <a href="?order_id=<?= urlencode($o['id_pesanan']) ?>" class="btn-action btn-detail" style="text-decoration:none;">Detail</a>
+                                            <a href="?<?= e(http_build_query(array_merge($params_halaman, ['order_id' => $o['id_pesanan'], 'page' => $page]))) ?>" class="btn-action btn-detail" style="text-decoration:none;">Detail</a>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -147,6 +220,38 @@ if (!empty($selected_id)) {
                         </tbody>
                     </table>
                 </div>
+
+                <!-- PAGINATION (SERVER-SIDE, BERDASARKAN ?page=) -->
+                <?php if ($total_rows > 0): ?>
+                    <div class="pagination-bar">
+                        <span class="pagination-info">
+                            Menampilkan <?= $baris_awal ?>&ndash;<?= $baris_akhir ?> dari <?= $total_rows ?> pesanan
+                        </span>
+                        <nav class="pagination">
+                            <?php if ($page > 1): ?>
+                                <a class="page-btn" href="?<?= e(http_build_query(array_merge($params_halaman, ['page' => $page - 1]))) ?>">&lsaquo; Sebelumnya</a>
+                            <?php else: ?>
+                                <span class="page-btn is-disabled">&lsaquo; Sebelumnya</span>
+                            <?php endif; ?>
+
+                            <?php foreach ($daftar_halaman as $h): ?>
+                                <?php if ($h === '...'): ?>
+                                    <span class="page-dots">&hellip;</span>
+                                <?php elseif ($h === $page): ?>
+                                    <span class="page-btn active"><?= $h ?></span>
+                                <?php else: ?>
+                                    <a class="page-btn" href="?<?= e(http_build_query(array_merge($params_halaman, ['page' => $h]))) ?>"><?= $h ?></a>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+
+                            <?php if ($page < $total_pages): ?>
+                                <a class="page-btn" href="?<?= e(http_build_query(array_merge($params_halaman, ['page' => $page + 1]))) ?>">Berikutnya &rsaquo;</a>
+                            <?php else: ?>
+                                <span class="page-btn is-disabled">Berikutnya &rsaquo;</span>
+                            <?php endif; ?>
+                        </nav>
+                    </div>
+                <?php endif; ?>
 
                 <!-- BOX DETAIL ORDER (DINAMIS BERDASARKAN ORDER YANG DIPILIH) -->
                 <?php if ($selected_order): ?>
@@ -248,7 +353,7 @@ if (!empty($selected_order['total_transaksi'])) {
                                     </div>
 
                                     <div class="form-actions" style="margin-top: 20px;">
-                                        <button type="button" class="btn-cancel" onclick="location.href='UrusPesanan.php'">Batal</button>
+                                        <button type="button" class="btn-cancel" onclick="location.href='UrusPesanan.php?<?= e(http_build_query(array_merge($params_halaman, ['page' => $page]))) ?>'">Batal</button>
                                         <button type="submit" class="btn-save">Simpan Perubahan</button>
                                     </div>
                                 </form>
