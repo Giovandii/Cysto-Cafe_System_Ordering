@@ -1,248 +1,334 @@
-/* =========================================================
-   KELOLA KASIR - Cysto Cafe
-   Token warna, ukuran, dan radius mengikuti frame
-   "KelolaKasir" pada Figma (file UI UX PBL, node 104:142).
-   Dipakai langsung oleh admin/kelola_kasir.php
-   ========================================================= */
 
-:root {
-    --kk-bg: #F7F3EC;
-    --kk-surface: #F5EFE6;
-    --kk-brown: #6B4A35;
-    --kk-brown-deep: #463022;
-    --kk-brown-soft: #7D553C;
-    --kk-brown-label: rgba(107, 74, 53, 0.55);
-    --kk-brown-label-2: rgba(107, 74, 53, 0.63);
-    --kk-red: #C85A54;
-    --kk-white: #FFFFFF;
-    --kk-cream: rgba(247, 243, 236, 0.92);
-    --kk-input: rgba(255, 255, 255, 0.77);
-    --kk-placeholder: rgba(0, 0, 0, 0.7);
-    --kk-border: rgba(107, 74, 53, 0.3);
-    --kk-font: 'Inria Serif', Georgia, 'Times New Roman', serif;
-    --kk-radius: 10px;
-    --kk-shadow-body: 0 4px 4px rgba(0, 0, 0, 0.25);
-}
+/* ================= DASAR HALAMAN ================= */
 
 * {
     box-sizing: border-box;
 }
 
 body.kelola-kasir-body {
-    background-color: var(--kk-bg);
-    color: var(--kk-brown);
-    font-family: var(--kk-font);
+    background: #f6f3ed;
+    color: #3d2417;
+    font-family: 'Segoe UI', system-ui, -apple-system, Arial, sans-serif;
     min-height: 100vh;
     margin: 0;
 }
 
+/* ================= LAYOUT ================= */
+
+.dashboard-layout {
+    display: grid;
+    grid-template-columns: 15.6111rem minmax(0, 1fr);
+    gap: 1.8889rem;
+    padding: 1.3889rem 1.5556rem 1.3889rem 1.4444rem;
+    min-height: 100vh;
+}
+
+.sidebar-container {
+    width: auto;
+    min-width: 0;
+    background: #5b3d2e;
+    border-radius: 1.3333rem;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 1.3889rem;
+    height: calc(100vh - 2.7778rem);
+    box-shadow: none;
+}
+
+.sidebar-brand {
+    height: 3.7778rem;
+    padding: 0 1.2222rem;
+    border-radius: 0.7778rem;
+    background: #3f261b;
+    color: #fff7ee;
+    margin-bottom: 0;
+    font-size: 1.2222rem;
+}
+
+.sidebar-user {
+    height: 3rem;
+    padding: 0 1.2222rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0;
+    border-radius: 0.6667rem;
+    background: #6f4b3a;
+    color: #fff7ee;
+    font-size: 0.9444rem;
+}
+
+.sidebar-nav {
+    gap: 0.7222rem;
+    margin-top: 1.5rem;
+}
+
+.nav-btn {
+    height: 3.1111rem;
+    padding: 0 1rem;
+    border-radius: 0.6667rem;
+    background: linear-gradient(180deg, #fff 0%, #f4eee7 100%);
+    color: #5b3d2e;
+    font-size: 0.9444rem;
+    box-shadow: 0 0.1111rem 0.2222rem rgba(0, 0, 0, .25);
+    transition: background .15s ease;
+}
+
+.nav-btn:hover {
+    background: #ebe3dc;
+    transform: none;
+}
+
+.nav-btn.active {
+    background: #ebe3dc;
+}
+
+.sidebar-footer {
+    margin-top: auto;
+    padding-top: 0;
+}
+
 /* ================= KONTEN ================= */
-.kk-content {
+
+.dashboard-content {
     flex: 1;
     min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+}
+
+.kk-content {
+    gap: 0;
 }
 
 .kk-head {
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     justify-content: space-between;
-    gap: 20px;
+    gap: 1rem;
     flex-wrap: wrap;
+    margin-bottom: 1.2222rem;
 }
 
 .kk-title {
-    font-size: 32px;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 1.6rem;
     font-weight: 700;
-    line-height: 1.2;
-    color: var(--kk-brown);
+    line-height: 1.15;
+    color: #3d2417;
     margin: 0;
 }
 
 .kk-subtitle {
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--kk-brown);
-    margin: 4px 0 0;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 0.7778rem;
+    font-weight: 400;
+    color: #5b3d2e;
+    margin-top: 0.2222rem;
 }
+
+/* ================= TOMBOL TAMBAH KASIR ================= */
 
 .kk-add-btn {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    height: 42px;
-    padding: 0 20px;
-    border: 1px solid var(--kk-brown);
-    border-radius: var(--kk-radius);
-    background: var(--kk-brown);
-    color: var(--kk-cream);
-    font-family: var(--kk-font);
-    font-size: 15px;
-    font-weight: 700;
-    cursor: pointer;
+    justify-content: center;
+    gap: 0.5rem;
+    height: 2.5rem;
+    padding: 0 1.2222rem;
+    border: 1px solid #5b3d2e;
+    border-radius: 0.5556rem;
+    background: #5b3d2e;
+    color: #fff7ee;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 0.8333rem;
+    font-weight: 600;
     text-decoration: none;
-    transition: background 0.15s ease;
+    cursor: pointer;
+    transition: background .15s ease;
 }
 
 .kk-add-btn:hover {
-    background: var(--kk-brown-deep);
+    background: #3f261b;
+}
+
+/* ================= CARD UTAMA ================= */
+
+.kk-card {
+    background: #faf8f4;
+    border: 1px solid #eee7dc;
+    border-radius: 1.3333rem;
+    padding: 1.5rem;
 }
 
 /* ================= NOTIFIKASI ================= */
+
 .kk-notif {
-    padding: 12px 18px;
-    border-radius: var(--kk-radius);
-    font-size: 15px;
-    font-weight: 700;
-    border: 1px solid transparent;
+    padding: 0.6111rem 0.8889rem;
+    margin-bottom: 0.8889rem;
+    border-radius: 0.5556rem;
+    font-size: 0.7778rem;
+    font-weight: 500;
 }
 
 .kk-notif.ok {
-    background: #E4EFE0;
-    border-color: #A9C6A0;
-    color: #3F6338;
+    background: #dcebd9;
+    color: #3f6338;
+    border: 1px solid #b8d2b2;
 }
 
 .kk-notif.err {
-    background: #F7E3E1;
-    border-color: var(--kk-red);
-    color: #9C3F3A;
+    background: #f5dcda;
+    color: #9c3f3a;
+    border: 1px solid #e5b8b4;
 }
 
-/* ================= SEARCH BOX ================= */
+/* ================= PENCARIAN ================= */
+
 .kk-search {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 10px;
-    align-self: flex-start;
-    padding: 7px 14px;
-    background: var(--kk-bg);
-    border: 1px solid var(--kk-border);
-    border-radius: var(--kk-radius);
-    color: var(--kk-brown);
+    flex-wrap: wrap;
+    gap: 0.4444rem;
+    width: fit-content;
+    max-width: 100%;
+    padding: 0 0.6667rem;
+    height: 2.8333rem;
+    margin-bottom: 1.4444rem;
+    background: #fff;
+    border: 1px solid #5b3d2e;
+    border-radius: 0.5556rem;
+    color: #3d2417;
 }
 
 .kk-search-icon {
     display: flex;
-    flex: 0 0 auto;
+    flex: none;
+}
+
+.kk-search-icon svg {
+    width: 1.2222rem;
+    height: 1.2222rem;
 }
 
 .kk-search-label {
-    font-size: 16px;
-    font-weight: 700;
+    font-size: 0.8889rem;
+    font-weight: 400;
     white-space: nowrap;
 }
 
 .kk-select {
-    height: 32px;
-    padding: 0 8px;
-    border: 1px solid var(--kk-border);
-    border-radius: 6px;
-    background: rgba(251, 251, 251, 0.76);
-    color: var(--kk-brown);
-    font-family: var(--kk-font);
-    font-size: 14px;
-    font-weight: 400;
+    height: 2rem;
+    padding: 0 0.5rem;
+    border: 1px solid #d6c9bd;
+    border-radius: 0.4444rem;
+    background: #faf8f4;
+    color: #5b3d2e;
+    font-family: inherit;
+    font-size: 0.7778rem;
     cursor: pointer;
     outline: none;
 }
 
-.kk-select:focus {
-    border-color: var(--kk-brown);
-}
-
 .kk-search-bar {
-    width: 170px;
-    height: 32px;
-    padding: 0 10px;
-    border: 0.5px solid var(--kk-border);
-    border-radius: 6px;
-    background: rgba(251, 251, 251, 0.76);
-    color: var(--kk-brown);
-    font-family: var(--kk-font);
-    font-size: 14px;
+    width: 11.1111rem;
+    height: 2rem;
+    padding: 0 0.6667rem;
+    border: 1px solid #d6c9bd;
+    border-radius: 0.4444rem;
+    background: #fafafa;
+    color: #3d2417;
+    font-family: inherit;
+    font-size: 0.7778rem;
     outline: none;
 }
 
 .kk-search-bar::placeholder {
-    color: var(--kk-placeholder);
+    color: #7a6a60;
 }
 
+.kk-select:focus,
 .kk-search-bar:focus {
-    border-color: var(--kk-brown);
+    border-color: #5b3d2e;
+}
+
+.kk-search:focus-within {
+    box-shadow: 0 0 0 3px #e3c78b;
 }
 
 .kk-search-btn {
-    height: 32px;
-    padding: 0 14px;
-    border: 0.5px solid var(--kk-border);
-    border-radius: 6px;
-    background: rgba(107, 74, 53, 0.74);
-    color: var(--kk-cream);
-    font-family: var(--kk-font);
-    font-size: 14px;
-    font-weight: 700;
+    height: 2rem;
+    padding: 0 0.8889rem;
+    border: none;
+    border-radius: 0.3889rem;
+    background: #5b3d2e;
+    color: #fff7ee;
+    font-family: inherit;
+    font-size: 0.7778rem;
+    font-weight: 600;
     cursor: pointer;
 }
 
+.kk-search-btn:hover {
+    background: #3f261b;
+}
+
 /* ================= TABEL ================= */
+
+.kk-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 0.7778rem;
+    background: #fff;
+    box-shadow: 0 0.1111rem 0.2222rem rgba(0, 0, 0, .18);
+}
+
 .kk-table {
     width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    background: var(--kk-bg);
-    border-radius: 0 0 var(--kk-radius) var(--kk-radius);
-    box-shadow: var(--kk-shadow-body);
+    border-collapse: collapse;
+    background: #fff;
 }
 
 .kk-table thead {
-    background: var(--kk-brown);
-    color: var(--kk-white);
-}
-
-.kk-table thead th:first-child {
-    border-radius: var(--kk-radius) 0 0 0;
-}
-
-.kk-table thead th:last-child {
-    border-radius: 0 var(--kk-radius) 0 0;
+    background: #5b3d2e;
+    color: #fff;
 }
 
 .kk-table th {
-    padding: 16px 26px;
+    height: 2.8333rem;
+    padding: 0 1rem;
     text-align: left;
-    font-size: 23px;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 0.7778rem;
     font-weight: 700;
-    line-height: 1.2;
 }
 
-.kk-table tbody tr {
-    border-bottom: 1px solid var(--kk-brown);
+.kk-table thead th:first-child {
+    border-radius: 0.7778rem 0 0 0;
+}
+
+.kk-table thead th:last-child {
+    border-radius: 0 0.7778rem 0 0;
+}
+
+.kk-table td {
+    height: 4.2778rem;
+    padding: 0 1rem;
+    background: #fff;
+    border-bottom: 1px solid #ece7df;
+    color: #3d2417;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 0.8333rem;
+    font-weight: 600;
+    vertical-align: middle;
+}
+
+.kk-table tbody tr:hover td {
+    background: #f7f2ec;
 }
 
 .kk-table tbody tr:last-child td {
     border-bottom: none;
-}
-
-.kk-table td {
-    padding: 16px 26px;
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--kk-brown);
-    vertical-align: middle;
-    border-bottom: 1px solid var(--kk-brown);
-    background: var(--kk-bg);
-}
-
-.kk-table tbody tr:last-child td:first-child {
-    border-radius: 0 0 0 var(--kk-radius);
-}
-
-.kk-table tbody tr:last-child td:last-child {
-    border-radius: 0 0 var(--kk-radius) 0;
 }
 
 .kk-col-user {
@@ -257,108 +343,107 @@ body.kelola-kasir-body {
     width: 42%;
 }
 
-/* Badge role */
+/* ================= BADGE ROLE ================= */
+
 .kk-badge {
     display: inline-block;
-    padding: 5px 16px;
-    border-radius: 14px;
-    font-size: 15px;
-    font-weight: 700;
-    background: rgba(107, 74, 53, 0.12);
-    color: var(--kk-brown);
-    border: 1px solid rgba(107, 74, 53, 0.28);
+    padding: 0.3333rem 0.8333rem;
+    border-radius: 55.5rem;
+    background: #efe6df;
+    border: 1px solid #d6c5b8;
+    color: #5b3d2e;
+    font-size: 0.7222rem;
+    font-weight: 600;
+    white-space: nowrap;
 }
 
 .kk-badge.role-admin {
-    background: rgba(107, 74, 53, 0.9);
-    border-color: var(--kk-brown);
-    color: var(--kk-bg);
+    background: #805d47;
+    border-color: #805d47;
+    color: #fff;
 }
 
 .kk-badge.role-owner {
-    background: rgba(200, 90, 84, 0.16);
-    border-color: rgba(200, 90, 84, 0.5);
-    color: #9C3F3A;
+    background: #f5dcda;
+    border-color: #e5b8b4;
+    color: #9c3f3a;
 }
 
-.kk-empty {
-    padding: 34px 26px !important;
-    text-align: center;
-    font-size: 16px;
-    font-weight: 400;
-    color: rgba(107, 74, 53, 0.7);
-}
+/* ================= TOMBOL AKSI ================= */
 
-.kk-count {
-    margin: 12px 0 0;
-    font-size: 14px;
-    color: rgba(107, 74, 53, 0.8);
-}
-
-/* ================= TOMBOL AKSI TABEL ================= */
 .kk-act {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 0.7778rem;
 }
 
 .kk-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    width: 93px;
-    height: 33px;
-    border-radius: var(--kk-radius);
-    background: var(--kk-bg);
-    font-family: var(--kk-font);
-    font-size: 14px;
-    font-weight: 700;
+    gap: 0.4444rem;
+    width: 5.5rem;
+    height: 2rem;
+    border-radius: 0.5556rem;
+    background: #faf8f4;
+    font-family: inherit;
+    font-size: 0.7778rem;
+    font-weight: 600;
+    text-decoration: none;
     cursor: pointer;
-    transition: background 0.15s ease, color 0.15s ease;
+    transition: background .15s ease;
 }
 
 .kk-btn svg {
-    display: block;
-    flex: 0 0 auto;
+    width: 0.9444rem;
+    height: 0.9444rem;
+    flex: none;
 }
 
 .kk-btn-edit {
-    border: 1px solid var(--kk-brown);
-    color: var(--kk-brown);
+    border: 1px solid #5b3d2e;
+    color: #5b3d2e;
 }
 
 .kk-btn-edit:hover {
-    background: var(--kk-brown);
-    color: var(--kk-bg);
+    background: #efe6df;
 }
 
 .kk-btn-del {
-    border: 1px solid var(--kk-red);
-    color: var(--kk-red);
+    border: 1px solid #e35b54;
+    color: #d94b45;
 }
 
 .kk-btn-del:hover {
-    background: var(--kk-red);
-    color: var(--kk-bg);
+    background: #f5dcda;
 }
 
-.kk-btn-txt {
-    border: 0;
-    background: transparent;
-    color: var(--kk-brown);
-    font-family: var(--kk-font);
-    font-size: 14px;
-    font-weight: 700;
-    padding: 4px 2px;
-    cursor: pointer;
+.kk-btn:focus-visible,
+.kk-add-btn:focus-visible {
+    outline: 3px solid #e3c78b;
+    outline-offset: 2px;
 }
 
-.kk-btn-txt:hover {
-    text-decoration: underline;
+/* ================= DATA KOSONG ================= */
+
+.kk-empty {
+    height: auto !important;
+    padding: 2rem 1rem !important;
+    text-align: center;
+    font-size: 0.7778rem !important;
+    font-weight: 400 !important;
+    color: #7a6a60 !important;
 }
 
-/* ================= OVERLAY & POPUP ================= */
+.kk-count {
+    margin: 0.8889rem 0 0;
+    color: #8b7565;
+    font-size: 0.7778rem;
+    font-weight: 400;
+}
+
+/* ================= POPUP TAMBAH / EDIT ================= */
+
 .kk-overlay {
     position: fixed;
     inset: 0;
@@ -366,8 +451,8 @@ body.kelola-kasir-body {
     display: none;
     align-items: center;
     justify-content: center;
-    padding: 24px;
-    background: rgba(70, 48, 34, 0.45);
+    padding: 1.3333rem;
+    background: rgba(63, 38, 27, .45);
 }
 
 .kk-overlay.open {
@@ -375,156 +460,133 @@ body.kelola-kasir-body {
 }
 
 .kk-popup {
-    width: 500px;
+    width: 31.25rem;
     max-width: 100%;
-    max-height: calc(100vh - 48px);
+    max-height: calc(100vh - 3rem);
     overflow-y: auto;
-    background: var(--kk-surface);
-    border: 1px solid var(--kk-brown-label-2);
-    border-radius: var(--kk-radius);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
+    background: #faf8f4;
+    border: 1px solid #d6c9bd;
+    border-radius: 0.7778rem;
+    box-shadow: 0 0.75rem 1.875rem rgba(0, 0, 0, .2);
 }
 
 .kk-popup-head {
-    background: var(--kk-brown);
-    color: var(--kk-white);
-    border-radius: var(--kk-radius) var(--kk-radius) 0 0;
-    padding: 18px 37px;
-    font-size: 26px;
+    padding: 1rem 1.5rem;
+    background: #5b3d2e;
+    color: #fff;
+    border-radius: 0.7778rem 0.7778rem 0 0;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 1.25rem;
     font-weight: 700;
-    line-height: 1.2;
 }
 
 .kk-form {
-    padding: 24px 29px;
+    padding: 1.5rem;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 0.5rem;
 }
 
 .kk-field {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 0.4444rem;
 }
 
 .kk-field + .kk-field {
-    margin-top: 14px;
+    margin-top: 0.5rem;
 }
 
 .kk-label {
-    font-size: 26px;
+    font-size: 0.8889rem;
     font-weight: 700;
-    color: var(--kk-brown);
+    color: #3d2417;
 }
 
+.kk-input,
 .kk-select-full {
     width: 100%;
-    height: 50px;
-    padding: 0 14px;
-    border: 1px solid var(--kk-brown-label-2);
-    border-radius: 7px;
-    background: var(--kk-input);
-    color: var(--kk-brown);
-    font-family: var(--kk-font);
-    font-size: 16px;
-    font-weight: 400;
+    height: 2.5rem;
+    padding: 0 0.7778rem;
+    border: 1px solid #d6c9bd;
+    border-radius: 0.4444rem;
+    background: #fff;
+    color: #3d2417;
+    font-family: inherit;
+    font-size: 0.8333rem;
     outline: none;
-    cursor: pointer;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%236B4A35' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 14px center;
 }
 
+.kk-input:focus,
 .kk-select-full:focus {
-    border-color: var(--kk-brown);
-    background-color: var(--kk-white);
-}
-
-.kk-input {
-    width: 100%;
-    height: 50px;
-    padding: 0 14px;
-    border: 1px solid var(--kk-brown-label-2);
-    border-radius: 7px;
-    background: var(--kk-input);
-    color: var(--kk-brown);
-    font-family: var(--kk-font);
-    font-size: 16px;
-    font-weight: 400;
-    outline: none;
-}
-
-.kk-input:focus {
-    border-color: var(--kk-brown);
-    background: var(--kk-white);
+    border-color: #5b3d2e;
+    box-shadow: 0 0 0 2px #e3c78b;
 }
 
 .kk-input[readonly] {
-    color: rgba(107, 74, 53, 0.75);
+    color: #7a6a60;
     cursor: default;
 }
 
 .kk-hint {
-    font-size: 13px;
-    color: rgba(107, 74, 53, 0.75);
+    font-size: 0.7222rem;
+    color: #7a6a60;
     margin: 0;
 }
 
 .kk-form-foot {
     display: flex;
     justify-content: flex-end;
-    gap: 16px;
-    margin-top: 22px;
+    gap: 0.6667rem;
+    margin-top: 1rem;
 }
 
 .kk-btn-save,
 .kk-btn-cancel {
-    height: 37px;
-    padding: 0 18px;
-    border-radius: 7px;
-    font-family: var(--kk-font);
-    font-size: 20px;
-    font-weight: 500;
-    line-height: 1;
+    height: 2.3333rem;
+    padding: 0 1.1111rem;
+    border-radius: 0.4444rem;
+    font-family: inherit;
+    font-size: 0.8333rem;
+    font-weight: 600;
     cursor: pointer;
 }
 
 .kk-btn-cancel {
-    background: rgba(227, 199, 139, 0.62);
-    border: 1px solid var(--kk-brown-label-2);
-    color: var(--kk-brown-label);
+    background: #efe6df;
+    border: 1px solid #d6c5b8;
+    color: #5b3d2e;
 }
 
 .kk-btn-save {
-    background: rgba(107, 74, 53, 0.74);
-    border: 1px solid rgba(107, 74, 53, 0.74);
-    color: var(--kk-cream);
+    background: #5b3d2e;
+    border: 1px solid #5b3d2e;
+    color: #fff;
 }
 
 .kk-btn-save:hover {
-    background: var(--kk-brown);
+    background: #3f261b;
 }
 
 .kk-btn-cancel:hover {
-    background: rgba(227, 199, 139, 0.85);
+    background: #e3d5c9;
 }
 
-/* ================= POPUP KONFIRMASI HAPUS ================= */
+/* ================= POPUP HAPUS ================= */
+
 .kk-popup-sm {
-    width: 400px;
+    width: 25rem;
 }
 
 .kk-popup-sm .kk-form {
-    gap: 10px;
+    gap: 0.6667rem;
 }
 
 .kk-warn {
     margin: 0;
-    font-size: 16px;
+    font-size: 0.8333rem;
     line-height: 1.5;
-    color: var(--kk-brown);
+    color: #3d2417;
 }
 
 .kk-warn strong {
@@ -532,42 +594,65 @@ body.kelola-kasir-body {
 }
 
 /* ================= RESPONSIF ================= */
+
 @media (max-width: 900px) {
-    .kk-table th {
-        font-size: 19px;
-        padding: 14px 18px;
+    .dashboard-layout {
+        grid-template-columns: 13rem minmax(0, 1fr);
+        gap: 1rem;
     }
 
+    .kk-table th,
     .kk-table td {
-        font-size: 17px;
-        padding: 14px 18px;
-    }
-
-    .kk-title {
-        font-size: 26px;
-    }
-
-    .kk-search {
-        flex-wrap: wrap;
-    }
-}
-
-@media (max-width: 560px) {
-    .kk-search-bar {
-        width: 100%;
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
     }
 
     .kk-act {
-        gap: 10px;
+        gap: 0.4444rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .dashboard-layout {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 1rem;
+        padding: 0.8889rem;
+    }
+
+    .sidebar-container {
+        position: static;
+        height: auto;
+    }
+
+    .sidebar-footer {
+        margin-top: 0.7778rem;
+    }
+
+    .kk-title {
+        font-size: 1.4444rem;
+    }
+
+    .kk-card {
+        padding: 1rem;
+    }
+
+    .kk-search {
+        width: 100%;
+        height: auto;
+        flex-wrap: wrap;
+        padding: 0.6667rem;
+    }
+
+    .kk-search-bar {
+        flex: 1;
+        min-width: 8rem;
+    }
+
+    .kk-table {
+        min-width: 34rem;
     }
 
     .kk-btn {
-        width: 78px;
-    }
-
-    .kk-form,
-    .kk-popup-head {
-        padding-left: 20px;
-        padding-right: 20px;
+        width: 4.5rem;
     }
 }

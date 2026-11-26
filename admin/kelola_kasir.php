@@ -231,6 +231,7 @@ if ($sukses !== '') {
                 </div>
             <?php endif; ?>
 
+        <div class="kk-card">
             <form method="GET" action="" class="kk-search">
                 <span class="kk-search-icon">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
@@ -250,6 +251,7 @@ if ($sukses !== '') {
                 <button type="submit" class="kk-search-btn">Cari</button>
             </form>
 
+        <div class="kk-table-wrap">
             <table class="kk-table">
                 <thead>
                     <tr>
@@ -304,10 +306,12 @@ if ($sukses !== '') {
                     <?php endif; ?>
                 </tbody>
             </table>
+        </div>
 
             <?php if ($list_count > 0): ?>
                 <p class="kk-count">Menampilkan <?= $list_count ?> pengguna<?= $cari !== '' ? ' (hasil pencarian)' : '' ?>.</p>
             <?php endif; ?>
+        </div>
         </main>
     </div>
 
