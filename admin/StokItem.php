@@ -1,11 +1,5 @@
 <?php
-session_start();
-
-// Proteksi login
-if (!isset($_SESSION['user_id'])) {
-    header('Location: Login.php');
-    exit;
-}
+require_once __DIR__ . '/../includes/auth.php';
 
 // 1. Set menu aktif agar tombol "Stok Item" di navbar otomatis menyala
 $active_menu = 'stok_item';

@@ -1,11 +1,5 @@
 <?php
-session_start();
-
-// Proteksi Login
-if (!isset($_SESSION['user_id'])) {
-    header('Location: Login.php');
-    exit;
-}
+require_once __DIR__ . '/../includes/auth.php';
 
 $active_menu = 'UrusPesanan';
 
