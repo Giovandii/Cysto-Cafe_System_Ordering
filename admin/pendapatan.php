@@ -186,7 +186,7 @@ try {
 
     <div class="dashboard-layout">
         <!-- Sidebar Modular -->
-        <?php include __DIR__ . '/../includes/SideBar.php'; ?>
+        <?php include __DIR__ . '/../includes/sidebar.php'; ?>
 
         <!-- Konten Utama -->
         <main class="dashboard-content">
