@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS menu (
     deskripsi text default ''
 );
 
-TABEL PENGGUNA (Admin, Kasir, Owner)
+--TABEL PENGGUNA (Admin, Kasir, Owner)
 CREATE TABLE IF NOT EXISTS pengguna (
     username VARCHAR(50) PRIMARY KEY,
     password VARCHAR(255) NOT NULL,
