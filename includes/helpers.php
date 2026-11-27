@@ -71,7 +71,7 @@ function buat_midtrans_qris($order_id, $gross_amount)
         'Authorization: Basic ' . $auth
     ]);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 8);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 20);
     $res = curl_exec($ch);
     curl_close($ch);
 

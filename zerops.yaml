@@ -1,0 +1,14 @@
+zerops:
+  - setup: app
+    build:
+      base: php@8.3
+      deployFiles: ./
+    run:
+      base: php-nginx@8.3
+      documentRoot: .
+      envVariables:
+        DB_HOST: ${postgres_hostname}
+        DB_PORT: ${postgres_port}
+        DB_NAME: ${postgres_dbName}
+        DB_USER: ${postgres_user}
+        DB_PASS: ${postgres_password}
