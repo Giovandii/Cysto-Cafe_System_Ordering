@@ -262,7 +262,7 @@ $path_gambar  = '..' . $cfg['folder_gambar'];
 
         .flash { padding: 10px 14px; border-radius: 8px; margin: 0 0 12px; background: #e6f2e6; color: #2d5a2d; }
 
-        dialog.modal { border: 0; padding: 0; border-radius: 8px; width: min(420px, 92vw); background: #f6efe6; color: #5a3d2b; overflow: hidden; box-shadow: 0 12px 40px rgba(40, 25, 15, .35); }
+        dialog.modal { position: fixed; inset: 0; margin: auto; border: 0; padding: 0; border-radius: 8px; width: min(420px, 92vw); background: #f6efe6; color: #5a3d2b; overflow: hidden; box-shadow: 0 12px 40px rgba(40, 25, 15, .35); }
         dialog.modal::backdrop { background: rgba(40, 25, 15, .5); }
         .modal-head { background: #6b4630; color: #fff; padding: 14px 18px; font-weight: 600; }
         .modal-body { padding: 16px 18px 6px; display: grid; gap: 12px; max-height: 70vh; overflow-y: auto; }
