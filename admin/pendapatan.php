@@ -184,8 +184,7 @@ try {
 </head>
 <body class="dashboard-body">
 
-    <div class="dashboard-layout">
-        <!-- Sidebar Modular -->
+<div class="dashboard-layout">
         <?php include __DIR__ . '/../includes/sidebar.php'; ?>
 
         <!-- Konten Utama -->
