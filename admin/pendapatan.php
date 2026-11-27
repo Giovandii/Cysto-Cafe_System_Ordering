@@ -3,7 +3,7 @@ session_start();
 
 // Proteksi Login Khusus Admin
 if (!isset($_SESSION['user_id']) || strtolower($_SESSION['role'] ?? '') !== 'admin') {
-    header('Location: LoginForAdmin.php');
+    header('Location: Login.php?role=admin');
     exit;
 }
 
@@ -44,7 +44,7 @@ try {
         FROM transaksi t
         LEFT JOIN pesanan p ON t.id_pesanan = p.id_pesanan
         WHERE {$where_waktu}
-          AND (p.status IS NULL OR LOWER(p.status) <> 'batal')
+          AND LOWER(p.status) = 'selesai'
     ";
     $stmt = $pdo->query($sql);
     $rekap = $stmt->fetch(PDO::FETCH_ASSOC);
